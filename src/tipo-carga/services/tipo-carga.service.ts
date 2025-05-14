@@ -24,12 +24,17 @@ export class TipoCargaService {
             const cargaExistente = await this.cargaRepository.findOne({where: {id:cargaId}})
 
             if(!cargaExistente){
-                throw new BadRequestException("El tipo de carga con el id buscado no exisite")
+                throw new BadRequestException(`El tipo de carga con el id ${cargaId} no existe`)
             }
 
             return cargaExistente
         } catch (error) {
             this.logger.error("Error al obtener el tipo de carga", error.stack)
+
+            if( error instanceof BadRequestException){
+                throw error
+            }
+
             throw new InternalServerErrorException('Ocurrió un error al buscar el tipo de carga. Intente nuevamente.');
         }
     }
@@ -37,7 +42,6 @@ export class TipoCargaService {
 
     public async crearTipoCarga(body: TipoCargaDTO): Promise<TipoCarga> {
         try {
-            // Validar si ya existe un tipo de carga idéntico para no generar duplicado
             const cargaExistente = await this.cargaRepository.findOne({
                 where: {
                     categoria: body.categoria,
@@ -56,6 +60,11 @@ export class TipoCargaService {
             return await this.cargaRepository.save(nuevaCarga);
         } catch (error) {
             this.logger.error('Error al guardar el tipo de carga', error.stack);
+
+            if (error instanceof ConflictException){
+                throw error
+            }
+
             throw new InternalServerErrorException('Ocurrió un error al guardar el tipo de carga. Intente nuevamente.');
         }
     }
@@ -64,22 +73,27 @@ export class TipoCargaService {
 
     public async softDelete(cargaId: number): Promise<TipoCarga> {
         try {
-            // Buscar la carga que se quiere eliminar
-            const cargaExistente = await this.cargaRepository.findOne({where: { id: cargaId }});
+            const cargaExistente: TipoCarga | null = await this.cargaRepository.findOne({
+                where: { id: cargaId }
+            });
 
             if (!cargaExistente) {
-                throw new BadRequestException('El tipo de carga con el id buscado no existe');
+                throw new BadRequestException(`Carga con id ${cargaId} no encontrada.`);
             }
 
             cargaExistente.deletedAt = new Date();
-
             return await this.cargaRepository.save(cargaExistente);
-        } catch (error) {
-            this.logger.error('Error al realizar el delete', error.stack);
-            throw new InternalServerErrorException('Ocurrió un error al realizar el delete. Intente nuevamente.');
-        }
-    }
 
+        } catch (error) {
+            this.logger.error(`Error al realizar el delete del id ${cargaId}`,error.stack);
+       
+            if (error instanceof BadRequestException) {
+                throw error;
+            }
+
+            throw new InternalServerErrorException('Ocurrió un error inesperado al realizar el delete.');
+        }
+    } 
 
 
 }
