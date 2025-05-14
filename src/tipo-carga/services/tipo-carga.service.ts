@@ -61,4 +61,25 @@ export class TipoCargaService {
     }
 
     
+
+    public async softDelete(cargaId: number): Promise<TipoCarga> {
+        try {
+            // Buscar la carga que se quiere eliminar
+            const cargaExistente = await this.cargaRepository.findOne({where: { id: cargaId }});
+
+            if (!cargaExistente) {
+                throw new BadRequestException('El tipo de carga con el id buscado no existe');
+            }
+
+            cargaExistente.deletedAt = new Date();
+
+            return await this.cargaRepository.save(cargaExistente);
+        } catch (error) {
+            this.logger.error('Error al realizar el delete', error.stack);
+            throw new InternalServerErrorException('Ocurrió un error al realizar el delete. Intente nuevamente.');
+        }
+    }
+
+
+
 }

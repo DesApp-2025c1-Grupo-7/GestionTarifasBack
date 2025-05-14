@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post } from '@nestjs/common';
 import { TipoCargaService } from '../services/tipo-carga.service';
 import { TipoCarga } from '../entities/tipo-carga.entity';
 import { TipoCargaDTO } from '../dtos/tipo-carga.dto';
@@ -28,4 +28,9 @@ export class TipoCargaController {
     }
 
 
+    @Patch(':id/delete')
+    async softDelete(@Param('id') cargaId: number) {
+        return this.cargaService.softDelete(cargaId);
+    }
+    
 }
