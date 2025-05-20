@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString, Min} from "class-validator"
+import { IsBoolean, IsNotEmpty, IsNumber, IsString, Min} from "class-validator"
 
 
 export class TipoCargaDTO {
@@ -20,6 +20,10 @@ export class TipoCargaDTO {
     @IsNumber()
     @Min(0)
     volumenTotal: number
+
+    @IsNotEmpty()
+    @IsBoolean()
+    esPeligrosa:boolean
 
     @IsNotEmpty()
     @IsNumber()

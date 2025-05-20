@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { TipoCargaService } from '../services/tipo-carga.service';
 import { TipoCarga } from '../entities/tipo-carga.entity';
 import { TipoCargaDTO } from '../dtos/tipo-carga.dto';
@@ -25,6 +25,12 @@ export class TipoCargaController {
     @Post()
     crearCarga(@Body() body:TipoCargaDTO){
         return this.cargaService.crearTipoCarga(body)
+    }
+
+
+    @Patch(':id')
+    async actualizarTipoCarga(@Param('id', ParseIntPipe) id: number, @Body() body: TipoCargaDTO): Promise<TipoCargaDTO> {
+        return this.cargaService.actualizarCarga(id, body);
     }
 
 

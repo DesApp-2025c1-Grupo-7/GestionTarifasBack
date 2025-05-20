@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TipoCarga } from '../entities/tipo-carga.entity';
 import { Repository } from 'typeorm';
@@ -49,6 +49,7 @@ export class TipoCargaService {
                     pesoTotal: body.pesoTotal,
                     volumenTotal: body.volumenTotal,
                     valorBase: body.valorBase,
+                    esPeligrosa:body.esPeligrosa
                 },
             });
 
@@ -68,6 +69,32 @@ export class TipoCargaService {
             throw new InternalServerErrorException('Ocurrió un error al guardar el tipo de carga. Intente nuevamente.');
         }
     }
+
+
+    public async actualizarCarga(id: number, body: TipoCargaDTO): Promise<TipoCargaDTO> {
+        try {
+
+            const cargaExistente = await this.cargaRepository.findOne({ where: { id } });
+
+            if (!cargaExistente) {
+                throw new NotFoundException(`La carga con ID ${id} no existe.`);
+            }
+
+
+            Object.assign(cargaExistente, body);
+
+            return await this.cargaRepository.save(cargaExistente);
+        } catch (error) {
+            this.logger.error(`Error al modificar la carga con ID ${id}`, error.stack);
+
+            if(error instanceof NotFoundException){
+                throw error
+            }
+
+            throw new InternalServerErrorException('Ocurrió un error al modificar la carga. Intente nuevamente.');
+        }
+    }
+
 
     
 

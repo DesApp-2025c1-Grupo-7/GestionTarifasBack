@@ -22,7 +22,12 @@ export class TipoCarga {
     @Column()
     valorBase: number
 
+    @Column()
+    esPeligrosa: boolean
+    
     @DeleteDateColumn({ nullable: true })  
     deletedAt: Date | null
+
+
 
 }
