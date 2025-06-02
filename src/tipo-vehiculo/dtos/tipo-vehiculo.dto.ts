@@ -9,5 +9,5 @@ export class CreateTipoVehiculoDTO {
 
   @IsArray()
   @Type(() => TipoCargaDTO)
-  cargas: TipoCargaDTO[];  
+  tipoCargas: TipoCargaDTO[];  
 }
