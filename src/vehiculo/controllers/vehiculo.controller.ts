@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, Put } from '@nestjs/common';
 import { VehiculoService } from '../services/vehiculo.service';
 import { Vehiculo } from '../entities/vehiculo.entity';
 import { CreateVehiculoDto } from '../dtos/vehiculo.dto';
@@ -26,7 +26,16 @@ export class VehiculoController {
     async crearVehiculos(@Body() body:CreateVehiculoDto){
         return this.vehiculoService.crearVehiculo(body)
     }
+    
+    @Put(':id')async actualizarVehiculo(@Param('id') id: number,@Body() body: CreateVehiculoDto): Promise<Vehiculo> {
+        return this.vehiculoService.actualizarVehiculo(id, body);
+    }
 
+    @Patch(':id/eliminar')
+    async eliminarVehiculo(@Param('id') id: number) {
+        await this.vehiculoService.eliminarVehiculo(id);
+        return { message: 'Vehículo eliminado correctamente' };
+    }
 
 
 }
