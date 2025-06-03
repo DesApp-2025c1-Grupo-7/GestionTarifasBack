@@ -1,5 +1,5 @@
 import { TipoVehiculo } from "src/tipo-vehiculo/entities/tipo-vehiculo.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 
 
@@ -13,8 +13,12 @@ export class Vehiculo {
     patente: string;
 
     @Column()
-    Precio_base: number;
+    precioBase: number;
 
     @ManyToOne(() => TipoVehiculo, tipoVehiculo => tipoVehiculo.vehiculos)
     tipoVehiculo: TipoVehiculo;
+
+    @DeleteDateColumn({ nullable: true })  
+    deletedAt: Date | null
+
 }
