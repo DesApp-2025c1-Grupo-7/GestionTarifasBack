@@ -21,7 +21,7 @@ export class Transportista {
   telefono: string;
 
 
-  @OneToMany(() => Vehiculo, vehiculo => vehiculo.transportista)
+  @OneToMany(() => Vehiculo, vehiculo => vehiculo.transportista, { cascade: true })
   vehiculos: Vehiculo[];
 
   @DeleteDateColumn({ nullable: true })

@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsNumber} from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber, IsArray} from 'class-validator';
 
 export class CreateTransportistaDto {
   @IsString()
@@ -16,4 +16,7 @@ export class CreateTransportistaDto {
   @IsNotEmpty()
   telefono: string;
 
+  @IsArray()
+  @IsNumber({}, { each: true }) // valida que cada item sea un número
+  vehiculos: number[];
 }
