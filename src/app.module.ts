@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { dbConfig } from './config/db.config';
 import { TipoVehiculoModule } from './tipo-vehiculo/tipo-vehiculo.module';
 import { VehiculoModule } from './vehiculo/vehiculo.module';
+import { TransportistaModule } from './transportista/transportista.module';
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { VehiculoModule } from './vehiculo/vehiculo.module';
     }),
     TipoCargaModule,
     TipoVehiculoModule,
-    VehiculoModule ],
+    VehiculoModule,
+    TransportistaModule ],
   controllers: [],
   providers: [],
 })
