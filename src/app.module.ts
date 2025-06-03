@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { dbConfig } from './config/db.config';
 import { TipoVehiculoModule } from './tipo-vehiculo/tipo-vehiculo.module';
+import { VehiculoModule } from './vehiculo/vehiculo.module';
 
 @Module({
   imports: [
@@ -12,7 +13,8 @@ import { TipoVehiculoModule } from './tipo-vehiculo/tipo-vehiculo.module';
       isGlobal: true, 
     }),
     TipoCargaModule,
-    TipoVehiculoModule ],
+    TipoVehiculoModule,
+    VehiculoModule ],
   controllers: [],
   providers: [],
 })

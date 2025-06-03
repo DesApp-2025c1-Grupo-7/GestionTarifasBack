@@ -15,7 +15,7 @@ export class TipoVehiculoService {
     private readonly logger = new Logger(TipoVehiculoService.name)
 
 
-    public async obtenerTipoVehiculos(): Promise<TipoVehiculo[]> {
+    async obtenerTipoVehiculos(): Promise<TipoVehiculo[]> {
         try {
             const vehiculos = await this.tipoVehiculoRep.find({ relations: ['tipoCargas'] });
             return vehiculos;
@@ -25,7 +25,7 @@ export class TipoVehiculoService {
         }
     }
 
-    public async obtenerTipoVehiculo(idTipoVehiculo:number): Promise<TipoVehiculo> {
+    async obtenerTipoVehiculo(idTipoVehiculo:number): Promise<TipoVehiculo> {
         try {
             const tipoVehiculoexist = await this.tipoVehiculoRep.findOne({where: {id:idTipoVehiculo}, relations:['tipoCargas']})
 
@@ -49,7 +49,7 @@ export class TipoVehiculoService {
 
 
 
-    public async crearTipoVehiculo(body: CreateTipoVehiculoDTO): Promise<TipoVehiculo> {
+    async crearTipoVehiculo(body: CreateTipoVehiculoDTO): Promise<TipoVehiculo> {
         try {
             const { descripcion, tipoCargas } = body;
 
@@ -85,7 +85,7 @@ export class TipoVehiculoService {
     }
 
 
-    public async eliminarTipoVehiculo(id: number): Promise<void> {
+    async eliminarTipoVehiculo(id: number): Promise<TipoVehiculo> {
         try {
             const tipoVehiculo = await this.tipoVehiculoRep.findOne({ where: { id } });
 
@@ -95,8 +95,7 @@ export class TipoVehiculoService {
 
             tipoVehiculo.deletedAt = new Date();
 
-            await this.tipoVehiculoRep.save(tipoVehiculo);
-
+            return await this.tipoVehiculoRep.save(tipoVehiculo);
         } catch (error) {
             this.logger.error('Error al eliminar tipo de vehículo', error.stack);
             if (error instanceof NotFoundException) {

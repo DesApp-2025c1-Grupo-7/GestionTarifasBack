@@ -1,5 +1,6 @@
 import { TipoCarga } from "src/tipo-carga/entities/tipo-carga.entity";
-import { Column, DeleteDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Vehiculo } from "src/vehiculo/entities/vehiculo.entity";
+import { Column, DeleteDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 
 
@@ -19,6 +20,8 @@ export class TipoVehiculo {
     })
     tipoCargas: TipoCarga[]
 
+    @OneToMany(() => Vehiculo, vehiculo => vehiculo.tipoVehiculo)
+    vehiculos: Vehiculo[]
 
     @DeleteDateColumn({ nullable: true })  
     deletedAt: Date | null
