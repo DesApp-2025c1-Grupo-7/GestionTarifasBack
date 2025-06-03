@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, Put } from '@nestjs/common';
 import { TransportistaService } from '../services/transportista.service';
 import { Transportista } from '../entities/transportista.entity';
 import { CreateTransportistaDto } from '../dtos/transportista.dto';
@@ -28,5 +28,16 @@ export class TransportistaController {
         return await this.transportistaService.crearTransportista(body)
     }
 
+
+    @Put(':id')
+    async actualizarTransportista(@Param('id') id: number,@Body() body: CreateTransportistaDto) {
+        return await this.transportistaService.actualizarTransportista(id, body);
+    }
+
+    @Patch(':id/eliminar')
+    async eliminarTransportista(@Param('id') id: number) {
+        await this.transportistaService.eliminarTransportista(id);
+        return { message: 'Transportista eliminado correctamente' };
+    }
 
 }

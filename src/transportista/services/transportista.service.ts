@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Transportista } from '../entities/transportista.entity';
 import { In, Repository } from 'typeorm';
@@ -80,6 +80,58 @@ export class TransportistaService {
     }
 
 
+    async actualizarTransportista(id:number,body:CreateTransportistaDto):Promise<Transportista>{
+        try{
+            const transportistaExist = await this.transportistaRep.findOne({where:{id:id}})
 
+            if(!transportistaExist){
+                throw new BadRequestException(`El transportista con id ${id} no existe`)
+            }
+
+            const vehiculos = await this.vehiculoRepository.findBy({ id: In(body.vehiculos) });
+            
+            if (vehiculos.length !== body.vehiculos.length) {
+                throw new BadRequestException("Uno o más vehículos no existen");
+            }
+
+            transportistaExist.vehiculos = vehiculos;
+            transportistaExist.nombre = body.nombre 
+            transportistaExist.contacto = body.contacto 
+            transportistaExist.telefono = body.telefono         
+            transportistaExist.costoServicio = body.costoServicio
+
+            return await this.transportistaRep.save(transportistaExist);
+
+        } catch(error){
+            this.logger.error('Error al actualizar transportista', error.stack);
+            
+            if (error instanceof BadRequestException){ 
+                throw error;
+            }
+            
+            throw new InternalServerErrorException('No se pudo actualizar el transportista');
+        }
+    }
+
+
+    async eliminarTransportista(id: number): Promise<Transportista> {
+        try {
+            const transportistaExist = await this.transportistaRep.findOne({ where: { id } });
+    
+            if (!transportistaExist) {
+                throw new NotFoundException('Transportista no encontrado');
+            }
+    
+            transportistaExist.deletedAt = new Date();
+    
+            return await this.transportistaRep.save(transportistaExist);
+        } catch (error) {
+            this.logger.error('Error al eliminar transportista', error.stack);
+            if (error instanceof NotFoundException) {
+                throw error;
+            }
+            throw new Error('No se pudo eliminar el transportista');
+        }
+    }
 
 }
