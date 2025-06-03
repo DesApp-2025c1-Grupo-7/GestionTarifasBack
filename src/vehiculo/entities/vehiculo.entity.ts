@@ -1,4 +1,5 @@
 import { TipoVehiculo } from "src/tipo-vehiculo/entities/tipo-vehiculo.entity";
+import { Transportista } from "src/transportista/entities/transportista.entity";
 import { Column, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 
@@ -14,6 +15,9 @@ export class Vehiculo {
 
     @Column()
     precioBase: number;
+
+    @ManyToOne(() => Transportista, transportista => transportista.vehiculos)
+    transportista: Transportista
 
     @ManyToOne(() => TipoVehiculo, tipoVehiculo => tipoVehiculo.vehiculos)
     tipoVehiculo: TipoVehiculo;
