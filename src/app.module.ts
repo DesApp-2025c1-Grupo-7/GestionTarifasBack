@@ -6,6 +6,7 @@ import { dbConfig } from './config/db.config';
 import { TipoVehiculoModule } from './tipo-vehiculo/tipo-vehiculo.module';
 import { VehiculoModule } from './vehiculo/vehiculo.module';
 import { TransportistaModule } from './transportista/transportista.module';
+import { ZonaDeViajeModule } from './zona-de-viaje/zona-de-viaje.module';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { TransportistaModule } from './transportista/transportista.module';
     TipoCargaModule,
     TipoVehiculoModule,
     VehiculoModule,
-    TransportistaModule ],
+    TransportistaModule,
+    ZonaDeViajeModule ],
   controllers: [],
   providers: [],
 })
