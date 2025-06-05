@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, Put } from '@nestjs/common';
 import { ZonaDeViajeService } from '../services/zona-de-viaje.service';
 import { ZonaDeViaje } from '../entities/zona-de-viaje.entity';
 import { CreateZonaDeViaje } from '../dto/zona-de-viaje.dto';
@@ -21,5 +21,17 @@ export class ZonaDeViajeController {
         return await this.zonaService.crearZonaViaje(body)
     }
 
+
+    @Put(':id')
+    async actualizarZonaViaje(@Param('id') id: number,@Body() body: CreateZonaDeViaje) {
+        return await this.zonaService.actualizarZonaViaje(id, body);
+    }
+    
+    @Patch(':id/eliminar')
+    async eliminarTransportista(@Param('id') id: number) {
+    await this.zonaService.softDelete(id);
+        return { message: 'Zona de viaje eliminada correctamente' };
+    }
+    
 
 }

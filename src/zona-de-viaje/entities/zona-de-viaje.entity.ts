@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class ZonaDeViaje {
@@ -16,5 +16,8 @@ export class ZonaDeViaje {
 
   @Column()
   costoKilometro: number;
+
+  @DeleteDateColumn({ nullable: true })  
+  deletedAt: Date | null
 
 }
