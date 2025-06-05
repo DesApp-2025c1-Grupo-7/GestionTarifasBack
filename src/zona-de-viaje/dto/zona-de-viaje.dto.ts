@@ -1,7 +1,7 @@
 import { IsInt, IsString } from "class-validator";
 
 
-export class ZonaDeViaje {
+export class CreateZonaDeViaje {
   
   @IsString()
   origen: string;
@@ -13,5 +13,5 @@ export class ZonaDeViaje {
   distancia: number;
 
   @IsInt()
-  costoKm: number;
+  costoKilometro: number;
 }
