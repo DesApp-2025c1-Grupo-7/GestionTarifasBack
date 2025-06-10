@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { TipoVehiculo } from 'src/tipo-vehiculo/entities/tipo-vehiculo.entity';
 import { CreateVehiculoDto } from '../dtos/vehiculo.dto';
 
+
 @Injectable()
 export class VehiculoService {
 
@@ -14,7 +15,7 @@ export class VehiculoService {
     private readonly logger = new Logger(VehiculoService.name)
 
     async obtenerVehiculos():Promise<Vehiculo[]>{
-        const vehiculos = await this.vehiculoRepository.find({relations: ['tipoVehiculo','tipoVehiculo.tipoCargas']})
+        const vehiculos = await this.vehiculoRepository.find({relations: ['tipoVehiculo','tipoVehiculo.tipoCargas', 'transportista']});
         return vehiculos
     }
 

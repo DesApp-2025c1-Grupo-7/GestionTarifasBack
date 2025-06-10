@@ -23,6 +23,6 @@ export class TipoVehiculo {
     @OneToMany(() => Vehiculo, vehiculo => vehiculo.tipoVehiculo)
     vehiculos: Vehiculo[]
 
-    @DeleteDateColumn({ nullable: true })  
+    @DeleteDateColumn({ nullable: true })
     deletedAt: Date | null
 }
