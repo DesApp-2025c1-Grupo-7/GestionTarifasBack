@@ -1,6 +1,7 @@
 import { TipoVehiculo } from "src/tipo-vehiculo/entities/tipo-vehiculo.entity";
 import { Transportista } from "src/transportista/entities/transportista.entity";
-import { Column, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { TarifaCosto } from "src/tarifa-costo/entities/tarifa-costo.entity";
+import { Column, DeleteDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 
 
@@ -22,7 +23,10 @@ export class Vehiculo {
     @ManyToOne(() => TipoVehiculo, tipoVehiculo => tipoVehiculo.vehiculos)
     tipoVehiculo: TipoVehiculo;
 
-    @DeleteDateColumn({ nullable: true })  
+    @OneToMany(() => TarifaCosto, tarifaCosto => tarifaCosto.vehiculo)
+    tarifaCosto: TarifaCosto[];
+
+    @DeleteDateColumn({ nullable: true })
     deletedAt: Date | null
 
 }

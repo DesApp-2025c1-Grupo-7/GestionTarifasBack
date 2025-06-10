@@ -1,4 +1,6 @@
-import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { on } from "events";
+import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { TarifaCosto } from "../../tarifa-costo/entities/tarifa-costo.entity";
 
 @Entity()
 export class ZonaDeViaje {
@@ -16,6 +18,9 @@ export class ZonaDeViaje {
 
   @Column()
   costoKilometro: number;
+
+  @OneToMany(() => TarifaCosto, tarifaCosto => tarifaCosto.zonaDeViaje)
+  tarifaCosto: TarifaCosto[];
 
   @DeleteDateColumn({ nullable: true })  
   deletedAt: Date | null
