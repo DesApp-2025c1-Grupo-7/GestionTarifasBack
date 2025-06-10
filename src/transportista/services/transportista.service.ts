@@ -15,8 +15,8 @@ export class TransportistaService {
 
 
     async obtenerTransportistas():Promise<Transportista[]>{
-        const transportistas = await this.transportistaRep.find({relations:['vehiculos','vehiculos.tipoVehiculo','vehiculos.tipoVehiculo.tipoCargas']})
-    
+        const transportistas = await this.transportistaRep.find({relations:['vehiculos','vehiculos.tipoVehiculo','vehiculos.tipoVehiculo.tipoCargas','tarifaCosto']})
+
         return transportistas
     }
 
