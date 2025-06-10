@@ -1,6 +1,6 @@
 import {IsNumber, IsNotEmpty} from "class-validator"
 
-export class TarifaCostoDTO {
+export class CreateTarifaCostoDTO {
 
     @IsNotEmpty()
     @IsNumber()
@@ -8,5 +8,13 @@ export class TarifaCostoDTO {
 
     @IsNotEmpty()
     @IsNumber()
-    tarifaCostoId: number;
+    vehiculo: number;
+
+    @IsNotEmpty()
+    @IsNumber()
+    zonaDeViaje: number;
+
+    @IsNotEmpty()
+    @IsNumber()
+    transportista: number;
 }

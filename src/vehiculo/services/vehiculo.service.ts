@@ -4,19 +4,18 @@ import { Vehiculo } from '../entities/vehiculo.entity';
 import { Repository } from 'typeorm';
 import { TipoVehiculo } from 'src/tipo-vehiculo/entities/tipo-vehiculo.entity';
 import { CreateVehiculoDto } from '../dtos/vehiculo.dto';
-import { TarifaCosto } from 'src/tarifa-costo/entities/tarifa-costo.entity';
+
 
 @Injectable()
 export class VehiculoService {
 
     constructor(@InjectRepository(Vehiculo) private readonly vehiculoRepository:Repository<Vehiculo>,
-                @InjectRepository(TipoVehiculo) private readonly tipoVehiculoRep:Repository<TipoVehiculo>,
-                @InjectRepository(TarifaCosto) private readonly tarifaCostoRep:Repository<TarifaCosto>){}
+                @InjectRepository(TipoVehiculo) private readonly tipoVehiculoRep:Repository<TipoVehiculo>){}
 
     private readonly logger = new Logger(VehiculoService.name)
 
     async obtenerVehiculos():Promise<Vehiculo[]>{
-        const vehiculos = await this.vehiculoRepository.find({relations: ['tipoVehiculo','tipoVehiculo.tipoCargas', 'tarifasCosto', 'transportista']});
+        const vehiculos = await this.vehiculoRepository.find({relations: ['tipoVehiculo','tipoVehiculo.tipoCargas', 'transportista']});
         return vehiculos
     }
 
