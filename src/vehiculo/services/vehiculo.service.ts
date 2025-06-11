@@ -50,11 +50,11 @@ export class VehiculoService {
             }
 
             // Obtener el TipoVehiculo correspondiente
-            const tipoVehiculo = await this.tipoVehiculoRep.findOne({where: { id: body.tipoVehiculoId }});
+            const tipoVehiculo = await this.tipoVehiculoRep.findOne({where: { id: body.tipoVehiculo }});
 
             if (!tipoVehiculo) {
             throw new BadRequestException(
-                `El tipo de vehículo con ID ${body.tipoVehiculoId} no existe.`);
+                `El tipo de vehículo con ID ${body.tipoVehiculo} no existe.`);
             }
 
             const nuevoVehiculo = this.vehiculoRepository.create({
@@ -93,10 +93,10 @@ export class VehiculoService {
             }
 
             // Buscar el nuevo tipo de vehículo
-            const tipoVehiculo = await this.tipoVehiculoRep.findOne({where: { id: body.tipoVehiculoId }});
+            const tipoVehiculo = await this.tipoVehiculoRep.findOne({where: { id: body.tipoVehiculo }});
 
             if (!tipoVehiculo) {
-            throw new BadRequestException(`El tipo de vehículo con ID ${body.tipoVehiculoId} no existe.`);
+            throw new BadRequestException(`El tipo de vehículo con ID ${body.tipoVehiculo} no existe.`);
             }
 
             // Actualizar los campos
