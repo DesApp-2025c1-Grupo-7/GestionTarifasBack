@@ -1,7 +1,8 @@
 import { Vehiculo } from "src/vehiculo/entities/vehiculo.entity";
-import { Column, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, DeleteDateColumn, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { TarifaCosto } from "src/tarifa-costo/entities/tarifa-costo.entity";
-
+import { ZonaDeViaje } from "src/zona-de-viaje/entities/zona-de-viaje.entity";
+import { JoinTable } from "typeorm/decorator/relations/JoinTable";
 
 @Entity()
 export class Transportista {
@@ -25,6 +26,12 @@ export class Transportista {
 
   @OneToMany(() => TarifaCosto, tarifaCosto => tarifaCosto.transportista, { cascade: true })
   tarifaCosto: TarifaCosto[];
+
+  @ManyToMany(() => ZonaDeViaje, zonaDeViaje => zonaDeViaje.transportistas)
+  @JoinTable({
+    name: 'transportista_zona'
+  })
+  zonasDeViaje: ZonaDeViaje[];
 
   @DeleteDateColumn({ nullable: true })
   deletedAt?: Date;
