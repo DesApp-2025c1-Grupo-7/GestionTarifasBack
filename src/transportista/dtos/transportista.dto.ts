@@ -40,4 +40,13 @@ export class CreateTransportistaDto {
   @IsArray()
   @IsNumber({}, { each: true })
   vehiculos: number[];
+
+  @ApiProperty({
+    example: [1, 4],
+    description: 'Opcional. IDs de zonas de viaje asociadas al transportista',
+  })
+  @IsArray()
+  @IsNumber({}, { each: true })
+  zonasDeViaje: number[];
+
 }

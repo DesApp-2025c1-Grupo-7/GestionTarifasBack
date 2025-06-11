@@ -4,18 +4,25 @@ import { Transportista } from '../entities/transportista.entity';
 import { In, Repository } from 'typeorm';
 import { Vehiculo } from 'src/vehiculo/entities/vehiculo.entity';
 import { CreateTransportistaDto } from '../dtos/transportista.dto';
+import { ZonaDeViaje } from 'src/zona-de-viaje/entities/zona-de-viaje.entity';
 
 @Injectable()
 export class TransportistaService {
     
     constructor(@InjectRepository(Transportista) private readonly transportistaRep:Repository<Transportista>,
-                @InjectRepository(Vehiculo) private readonly vehiculoRepository:Repository<Vehiculo>){}
+                @InjectRepository(Vehiculo) private readonly vehiculoRepository:Repository<Vehiculo>,
+                @InjectRepository(ZonaDeViaje) private readonly zonaDeViajeRepo: Repository<ZonaDeViaje>){}
 
     private readonly logger = new Logger(TransportistaService.name)
 
 
     async obtenerTransportistas():Promise<Transportista[]>{
-        const transportistas = await this.transportistaRep.find({relations:['vehiculos','vehiculos.tipoVehiculo','vehiculos.tipoVehiculo.tipoCargas']})
+        const transportistas = await this.transportistaRep.find({
+            relations:[
+                'vehiculos',
+                'vehiculos.tipoVehiculo',
+                'vehiculos.tipoVehiculo.tipoCargas',
+                'zonasDeViaje']})
 
         return transportistas
     }
@@ -23,7 +30,12 @@ export class TransportistaService {
 
     async obtenerTransportista(idTransportista:number): Promise<Transportista> {
         try {
-            const transportistaExist = await this.transportistaRep.findOne({where: {id:idTransportista},relations:['vehiculos','vehiculos.tipoVehiculo','vehiculos.tipoVehiculo.tipoCargas']}) 
+            const transportistaExist = await this.transportistaRep.findOne({where: {id:idTransportista},
+                relations:[
+                    'vehiculos',
+                    'vehiculos.tipoVehiculo',
+                    'vehiculos.tipoVehiculo.tipoCargas',
+                    'zonasDeViaje']}) 
                                                                                    
             if(!transportistaExist){
                 throw new BadRequestException(`El tipo transportista con el id ${idTransportista} no existe`)
@@ -54,18 +66,28 @@ export class TransportistaService {
 
             const vehiculos = await this.vehiculoRepository.findBy({id: In(body.vehiculos)});
 
-
             if (vehiculos.length !== body.vehiculos.length) {
                 throw new BadRequestException("Uno o más vehículos no existen ");
             }
+
+
+            const zonas = await this.zonaDeViajeRepo.findBy({ id: In(body.zonasDeViaje) });
+
+            if (zonas.length !== body.zonasDeViaje.length) {
+                throw new BadRequestException("Una o más zonas de viaje no existen");
+            }
+
+
 
             const nuevoTransportista = this.transportistaRep.create({
                 nombre: body.nombre,
                 contacto: body.contacto,
                 telefono: body.telefono,
                 costoServicio: body.costoServicio,
-                vehiculos: vehiculos
+                vehiculos: vehiculos,
+                zonasDeViaje:zonas
             });
+
 
             return await this.transportistaRep.save(nuevoTransportista);
         }catch(error){
@@ -94,11 +116,19 @@ export class TransportistaService {
                 throw new BadRequestException("Uno o más vehículos no existen");
             }
 
+            const zonas = await this.zonaDeViajeRepo.findBy({ id: In(body.zonasDeViaje) });
+
+            if (zonas.length !== body.zonasDeViaje.length) {
+                throw new BadRequestException("Una o más zonas de viaje no existen");
+            }
+
+
             transportistaExist.vehiculos = vehiculos;
             transportistaExist.nombre = body.nombre 
             transportistaExist.contacto = body.contacto 
             transportistaExist.telefono = body.telefono         
             transportistaExist.costoServicio = body.costoServicio
+            transportistaExist.zonasDeViaje = zonas
 
             return await this.transportistaRep.save(transportistaExist);
 
