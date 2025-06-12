@@ -21,7 +21,7 @@ export class TarifaCostoService {
     public async obtenerTarifasCosto(): Promise<TarifaCosto[]> {
 
         const tarifasCosto: TarifaCosto[] = await this.tarifaCostoRepository.find({ 
-            relations: ['zonaDeViaje', 'vehiculo', 'transportista', 'vehiculo.tipoVehiculo'],
+            relations: ['zonaDeViaje', 'vehiculo', 'transportista', 'vehiculo.tipoVehiculo','vehiculo.tipoVehiculo.tipoCargas'],
         });
 
         return tarifasCosto;
