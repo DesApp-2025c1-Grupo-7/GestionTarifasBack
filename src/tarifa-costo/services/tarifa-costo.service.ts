@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TarifaCosto } from '../entities/tarifa-costo.entity';
 import { Repository } from 'typeorm';
@@ -77,4 +77,33 @@ export class TarifaCostoService {
             throw new InternalServerErrorException('Ocurrió un error al crear la tarifa de costo. Intente nuevamente.');
         }
     }
+
+    public async eliminarTarifaCosto(id: number): Promise<TarifaCosto> {
+        try {
+            const tarifa = await this.tarifaCostoRepository.findOne({ where: { id } });
+
+            if (!tarifa) {
+                throw new NotFoundException('Tarifa de costo no encontrada');
+            }
+
+            tarifa.deletedAt = new Date();
+
+            return await this.tarifaCostoRepository.save(tarifa);
+        } catch (error) {
+            this.logger.error('Error al eliminar tarifa de costo', error.stack);
+            if (error instanceof NotFoundException) {
+                throw error;
+            }
+            throw new Error('No se pudo eliminar la tarifa de costo');
+        }
+    }   
+
+
+
+
+
+
+
+
+
 }

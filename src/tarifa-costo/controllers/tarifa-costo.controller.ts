@@ -1,4 +1,4 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, Get } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, Get, Param, Patch } from '@nestjs/common';
 import { CreateTarifaCostoDTO } from '../dtos/tarifa-costo.dto'; 
 import { TarifaCostoService } from '../services/tarifa-costo.service';
 import { TarifaCosto } from '../entities/tarifa-costo.entity';
@@ -20,6 +20,12 @@ export class TarifaCostoController {
     @Post()
     async createTarifaCosto(@Body() newTarifaCosto: CreateTarifaCostoDTO) {
        return this.tarifaCostoService.crearTarifaCosto(newTarifaCosto)                                               
+    }
+
+    @Patch(':id/eliminar')
+    async eliminarTipoVehiculo(@Param('id') id: number) {
+        await this.tarifaCostoService.eliminarTarifaCosto(id);
+        return { message: 'Tarifa costo eliminada correctamente' };
     }
 }
 
