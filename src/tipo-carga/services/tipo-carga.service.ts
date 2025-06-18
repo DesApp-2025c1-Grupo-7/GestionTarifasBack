@@ -49,7 +49,7 @@ export class TipoCargaService {
                     pesoTotal: body.pesoTotal,
                     volumenTotal: body.volumenTotal,
                     valorBase: body.valorBase,
-                    esPeligrosa:body.esPeligrosa
+                    esEspecial:body.esEspecial
                 },
             });
 
@@ -73,22 +73,29 @@ export class TipoCargaService {
 
     public async actualizarCarga(id: number, body: TipoCargaDTO): Promise<TipoCargaDTO> {
         try {
-
             const cargaExistente = await this.cargaRepository.findOne({ where: { id } });
 
             if (!cargaExistente) {
-                throw new NotFoundException(`La carga con ID ${id} no existe.`);
+            throw new NotFoundException(`La carga con ID ${id} no existe.`);
             }
 
+            cargaExistente.categoria = body.categoria;
+            cargaExistente.esEspecial = body.esEspecial;
+            cargaExistente.pesoTotal = body.pesoTotal;
+            cargaExistente.volumenTotal = body.volumenTotal;
+            cargaExistente.valorBase = body.valorBase;
 
-            Object.assign(cargaExistente, body);
+            // Solo actualiza si viene en el body
+            if (body.requisitoEspecial !== undefined) {
+                cargaExistente.requisitoEspecial = body.requisitoEspecial;
+            }
 
             return await this.cargaRepository.save(cargaExistente);
         } catch (error) {
             this.logger.error(`Error al modificar la carga con ID ${id}`, error.stack);
 
-            if(error instanceof NotFoundException){
-                throw error
+            if (error instanceof NotFoundException) {
+            throw error;
             }
 
             throw new InternalServerErrorException('Ocurrió un error al modificar la carga. Intente nuevamente.');

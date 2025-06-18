@@ -1,4 +1,4 @@
-import { Entity } from "typeorm";
+import { CreateDateColumn, Entity } from "typeorm";
 import { Column, PrimaryGeneratedColumn } from "typeorm";
 import { DeleteDateColumn } from "typeorm/decorator/columns/DeleteDateColumn";
 import { ManyToOne } from "typeorm";
@@ -15,19 +15,21 @@ export class TarifaCosto {
   @Column()
   valor_base: number;
 
-   // conexion con tabla vehiculo 
-   @ManyToOne(() => Vehiculo, vehiculo => vehiculo.tarifaCosto)
-   vehiculo: Vehiculo;
 
-   // conexion con tabla zona de viaje
-   @ManyToOne(() => ZonaDeViaje, zonaDeViaje => zonaDeViaje.tarifaCosto)
-   zonaDeViaje: ZonaDeViaje;
+  @ManyToOne(() => Vehiculo, vehiculo => vehiculo.tarifaCosto)
+  vehiculo: Vehiculo;
 
-   // conexion con tabla transportista
-   @ManyToOne(() => Transportista, transportista => transportista.tarifaCosto)
-   transportista: Transportista;
+  @ManyToOne(() => ZonaDeViaje, zonaDeViaje => zonaDeViaje.tarifaCosto)
+  zonaDeViaje: ZonaDeViaje;
 
-   @DeleteDateColumn({ nullable: true })
-   deletedAt: Date | null;
+  
+  @ManyToOne(() => Transportista, transportista => transportista.tarifaCosto)
+  transportista: Transportista;
+
+  @DeleteDateColumn({ nullable: true })
+  deletedAt: Date | null;
+
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
 
 }                           

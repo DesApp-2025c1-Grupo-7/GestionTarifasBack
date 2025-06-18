@@ -11,8 +11,8 @@ export class TipoCarga {
     @Column()
     categoria: string
 
-    @Column()
-    requisitoEspecial: string
+    @Column({ nullable: true })
+    requisitoEspecial?: string;
 
     @Column()
     pesoTotal: number
@@ -24,7 +24,7 @@ export class TipoCarga {
     valorBase: number
 
     @Column()
-    esPeligrosa: boolean
+    esEspecial: boolean
     
     @DeleteDateColumn({ nullable: true })  
     deletedAt: Date | null

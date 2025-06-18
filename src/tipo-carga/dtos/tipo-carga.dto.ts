@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsNumber, IsString, Min } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class TipoCargaDTO {
@@ -15,9 +15,9 @@ export class TipoCargaDTO {
     example: 'Requiere refrigeración',
     description: 'Requisito especial que debe cumplirse para transportar esta carga',
   })
-  @IsNotEmpty()
   @IsString()
-  requisitoEspecial: string;
+  @IsOptional()
+  requisitoEspecial?: string;
 
   @ApiProperty({
     example: 1500,
@@ -45,7 +45,7 @@ export class TipoCargaDTO {
   })
   @IsNotEmpty()
   @IsBoolean()
-  esPeligrosa: boolean;
+  esEspecial: boolean;
 
   @ApiProperty({
     example: 2500,

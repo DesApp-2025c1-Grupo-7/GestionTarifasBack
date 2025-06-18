@@ -23,7 +23,7 @@ export class TarifaCostoController {
     }
 
     @Patch(':id/eliminar')
-    async eliminarTipoVehiculo(@Param('id') id: number) {
+    async eliminarTarifaCosto(@Param('id') id: number) {
         await this.tarifaCostoService.eliminarTarifaCosto(id);
         return { message: 'Tarifa costo eliminada correctamente' };
     }
