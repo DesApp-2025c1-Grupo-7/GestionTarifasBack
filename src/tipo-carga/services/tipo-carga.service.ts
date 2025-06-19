@@ -42,16 +42,16 @@ export class TipoCargaService {
 
     public async crearTipoCarga(body: TipoCargaDTO): Promise<TipoCarga> {
         try {
-            const cargaExistente = await this.cargaRepository.findOne({
-                where: {
-                    categoria: body.categoria,
-                    requisitoEspecial: body.requisitoEspecial,
-                    pesoTotal: body.pesoTotal,
-                    volumenTotal: body.volumenTotal,
-                    valorBase: body.valorBase,
-                    esEspecial:body.esEspecial
-                },
-            });
+            const cargas = await this.cargaRepository.find();
+
+            const cargaExistente = cargas.find(c =>
+                c.categoria === body.categoria &&
+                c.requisitoEspecial === body.requisitoEspecial &&
+                c.pesoTotal === body.pesoTotal &&
+                c.volumenTotal === body.volumenTotal &&
+                c.valorBase === body.valorBase &&
+                c.esEspecial === body.esEspecial
+            );
 
             if (cargaExistente) {
                 throw new ConflictException('Ya existe un tipo de carga con esos mismos valores.');
@@ -71,7 +71,7 @@ export class TipoCargaService {
     }
 
 
-    public async actualizarCarga(id: number, body: TipoCargaDTO): Promise<TipoCargaDTO> {
+    public async actualizarCarga(id: number, body: TipoCargaDTO): Promise<TipoCarga> {
         try {
             const cargaExistente = await this.cargaRepository.findOne({ where: { id } });
 

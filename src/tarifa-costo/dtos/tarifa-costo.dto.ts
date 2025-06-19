@@ -8,7 +8,7 @@ export class CreateTarifaCostoDTO {
 
     @IsNotEmpty()
     @IsNumber()
-    vehiculo: number;
+    tipoVehiculo: number;
 
     @IsNotEmpty()
     @IsNumber()

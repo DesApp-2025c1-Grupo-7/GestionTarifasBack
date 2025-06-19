@@ -29,7 +29,7 @@ export class TipoCargaController {
 
 
     @Patch(':id')
-    async actualizarTipoCarga(@Param('id', ParseIntPipe) id: number, @Body() body: TipoCargaDTO): Promise<TipoCargaDTO> {
+    async actualizarTipoCarga(@Param('id', ParseIntPipe) id: number, @Body() body: TipoCargaDTO): Promise<TipoCarga> {
         return this.cargaService.actualizarCarga(id, body);
     }
 

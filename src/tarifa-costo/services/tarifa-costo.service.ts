@@ -5,14 +5,14 @@ import { Repository } from 'typeorm';
 import { CreateTarifaCostoDTO } from  '../dtos/tarifa-costo.dto';
 import { Transportista } from 'src/transportista/entities/transportista.entity';
 import { ZonaDeViaje } from 'src/zona-de-viaje/entities/zona-de-viaje.entity';
-import { Vehiculo } from 'src/vehiculo/entities/vehiculo.entity';
+import { TipoVehiculo } from 'src/tipo-vehiculo/entities/tipo-vehiculo.entity';
 
 @Injectable()
 export class TarifaCostoService {
 
     constructor(@InjectRepository(TarifaCosto) private readonly tarifaCostoRepository:Repository<TarifaCosto>,
                 @InjectRepository(Transportista) private readonly transportistaRepository:Repository<Transportista>,
-                @InjectRepository(Vehiculo) private readonly vehiculoRepo:Repository<Vehiculo>,
+                @InjectRepository(TipoVehiculo) private readonly vehiculoRepo:Repository<TipoVehiculo>,
                 @InjectRepository(ZonaDeViaje) private readonly zonaRepository:Repository<ZonaDeViaje>){}
     
 
@@ -21,7 +21,7 @@ export class TarifaCostoService {
     public async obtenerTarifasCosto(): Promise<TarifaCosto[]> {
 
         const tarifasCosto: TarifaCosto[] = await this.tarifaCostoRepository.find({ 
-            relations: ['zonaDeViaje', 'vehiculo', 'transportista', 'vehiculo.tipoVehiculo','vehiculo.tipoVehiculo.tipoCargas'],
+            relations: ['zonaDeViaje', 'tipoVehiculo', 'transportista', 'tipoVehiculo.tipoCargas'],
         });
 
         return tarifasCosto;
@@ -30,10 +30,10 @@ export class TarifaCostoService {
     public async crearTarifaCosto(body: CreateTarifaCostoDTO): Promise<TarifaCosto> {
         try {
 
-            const vehiculo = await this.vehiculoRepo.findOne({ where: { id: body.vehiculo } });
+            const tipoVehiculo = await this.vehiculoRepo.findOne({ where: { id: body.tipoVehiculo } });
 
-            if (!vehiculo) {
-                throw new BadRequestException('El vehículo especificado no existe.');
+            if (!tipoVehiculo) {
+                throw new BadRequestException('El tipo vehículo especificado no existe.');
             }
 
             const zonaDeViaje = await this.zonaRepository.findOne({ where: { id: body.zonaDeViaje } });
@@ -48,7 +48,7 @@ export class TarifaCostoService {
 
             const tarifaExistente = await this.tarifaCostoRepository.findOne({
                 where: {
-                    vehiculo: { id: body.vehiculo },
+                    tipoVehiculo: { id: body.tipoVehiculo },
                     zonaDeViaje: { id: body.zonaDeViaje },
                     transportista: { id: body.transportista },
                      valor_base: body.valorBase
@@ -61,8 +61,8 @@ export class TarifaCostoService {
 
             const nuevaTarifa = this.tarifaCostoRepository.create({
                 valor_base: body.valorBase,
-                vehiculo,
                 zonaDeViaje,
+                tipoVehiculo,
                 transportista
             });
 

@@ -51,7 +51,7 @@ export class TipoVehiculoService {
 
     async crearTipoVehiculo(body: CreateTipoVehiculoDTO): Promise<TipoVehiculo> {
         try {
-            const { descripcion, tipoCargas } = body;
+            const { descripcion, tipoCargas, precioBase } = body;
 
             //duplicadas en el body
             const cargasUnicas = [...new Set(tipoCargas)];
@@ -69,6 +69,7 @@ export class TipoVehiculoService {
 
             const nuevoTipoVehiculo = this.tipoVehiculoRep.create({
                 descripcion,
+                precioBase,
                 tipoCargas: cargasRelacionadas,
             });
 
@@ -114,7 +115,7 @@ export class TipoVehiculoService {
                 throw new NotFoundException('Tipo de vehículo no encontrado');
             }
 
-            const { descripcion, tipoCargas } = body;
+            const { descripcion, tipoCargas, precioBase } = body;
 
             // Validar duplicados
             const cargasUnicas = [...new Set(tipoCargas)];
@@ -128,9 +129,9 @@ export class TipoVehiculoService {
                 throw new BadRequestException('Algunas cargas no existen');
             }
 
-            // Actualizar campos
             tipoVehiculo.descripcion = descripcion;
             tipoVehiculo.tipoCargas = cargasRelacionadas;
+            tipoVehiculo.precioBase = precioBase
 
             return await this.tipoVehiculoRep.save(tipoVehiculo);
 

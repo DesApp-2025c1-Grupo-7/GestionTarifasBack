@@ -1,59 +1,40 @@
-import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from "class-validator";
-import { ApiProperty } from "@nestjs/swagger";
+import { Transform, Type } from 'class-transformer';
+import {IsBoolean,IsNotEmpty,IsNumber,IsOptional,IsString,Min} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class TipoCargaDTO {
-
-  @ApiProperty({
-    example: 'Electrónica',
-    description: 'Categoría de la carga',
-  })
+  @ApiProperty()
   @IsNotEmpty()
   @IsString()
+  @Transform(({ value }) => value.trim().toLowerCase()) 
   categoria: string;
 
-  @ApiProperty({
-    example: 'Requiere refrigeración',
-    description: 'Requisito especial que debe cumplirse para transportar esta carga',
-  })
+  @ApiProperty()
   @IsString()
   @IsOptional()
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim().toLowerCase() : ''))
   requisitoEspecial?: string;
 
-  @ApiProperty({
-    example: 1500,
-    description: 'Peso total de la carga en kilogramos',
-    minimum: 0,
-  })
-  @IsNotEmpty()
+  @ApiProperty()
   @IsNumber()
+  @Type(() => Number)
   @Min(0)
   pesoTotal: number;
 
-  @ApiProperty({
-    example: 3.5,
-    description: 'Volumen total de la carga en metros cúbicos',
-    minimum: 0,
-  })
-  @IsNotEmpty()
+  @ApiProperty()
   @IsNumber()
+  @Type(() => Number)
   @Min(0)
   volumenTotal: number;
 
-  @ApiProperty({
-    example: true,
-    description: 'Indica si la carga es peligrosa',
-  })
-  @IsNotEmpty()
-  @IsBoolean()
-  esEspecial: boolean;
-
-  @ApiProperty({
-    example: 2500,
-    description: 'Valor base para el transporte de esta carga',
-    minimum: 0,
-  })
-  @IsNotEmpty()
+  @ApiProperty()
   @IsNumber()
+  @Type(() => Number)
   @Min(0)
   valorBase: number;
+
+  @ApiProperty()
+  @IsBoolean()
+  @Type(() => Boolean)
+  esEspecial: boolean;
 }

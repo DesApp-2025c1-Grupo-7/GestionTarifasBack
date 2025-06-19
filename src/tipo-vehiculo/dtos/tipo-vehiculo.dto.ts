@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { IsArray, IsNotEmpty, IsString } from "class-validator";
+import { IsArray, IsInt, IsNotEmpty, IsNumber, IsString } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 import { TipoCargaDTO } from "src/tipo-carga/dtos/tipo-carga.dto";
 
@@ -11,6 +11,14 @@ export class CreateTipoVehiculoDTO {
   @IsNotEmpty()
   @IsString()
   descripcion: string;
+
+  @ApiProperty({
+      example: 15000,
+      description: 'Precio base del vehículo',
+    })
+  @IsNumber()
+  @Type(() => Number)
+  precioBase: number;
 
   @ApiProperty({
     type: [TipoCargaDTO],

@@ -2,10 +2,9 @@ import { CreateDateColumn, Entity } from "typeorm";
 import { Column, PrimaryGeneratedColumn } from "typeorm";
 import { DeleteDateColumn } from "typeorm/decorator/columns/DeleteDateColumn";
 import { ManyToOne } from "typeorm";
-import { OneToMany } from "typeorm";
-import { Vehiculo } from "../../vehiculo/entities/vehiculo.entity";
 import { ZonaDeViaje } from "../../zona-de-viaje/entities/zona-de-viaje.entity";
 import { Transportista } from "../../transportista/entities/transportista.entity";
+import { TipoVehiculo } from "src/tipo-vehiculo/entities/tipo-vehiculo.entity";
 
 @Entity()
 export class TarifaCosto {
@@ -16,8 +15,8 @@ export class TarifaCosto {
   valor_base: number;
 
 
-  @ManyToOne(() => Vehiculo, vehiculo => vehiculo.tarifaCosto)
-  vehiculo: Vehiculo;
+  @ManyToOne(() => TipoVehiculo, tipoVehiculo => tipoVehiculo.tarifaCosto)
+  tipoVehiculo: TipoVehiculo;
 
   @ManyToOne(() => ZonaDeViaje, zonaDeViaje => zonaDeViaje.tarifaCosto)
   zonaDeViaje: ZonaDeViaje;

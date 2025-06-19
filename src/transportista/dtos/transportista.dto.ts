@@ -35,11 +35,11 @@ export class CreateTransportistaDto {
 
   @ApiProperty({
   example: [1, 2, 3],
-  description: 'IDs de vehículos existentes a asociar con el nuevo transportista',
+  description: 'IDs de tipo vehículos existentes a asociar con el nuevo transportista',
   })
   @IsArray()
   @IsNumber({}, { each: true })
-  vehiculos: number[];
+  tipoVehiculos: number[];
 
   @ApiProperty({
     example: [1, 4],

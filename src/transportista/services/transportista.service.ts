@@ -2,15 +2,15 @@ import { BadRequestException, Injectable, InternalServerErrorException, Logger, 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Transportista } from '../entities/transportista.entity';
 import { In, Repository } from 'typeorm';
-import { Vehiculo } from 'src/vehiculo/entities/vehiculo.entity';
 import { CreateTransportistaDto } from '../dtos/transportista.dto';
 import { ZonaDeViaje } from 'src/zona-de-viaje/entities/zona-de-viaje.entity';
+import { TipoVehiculo } from 'src/tipo-vehiculo/entities/tipo-vehiculo.entity';
 
 @Injectable()
 export class TransportistaService {
     
     constructor(@InjectRepository(Transportista) private readonly transportistaRep:Repository<Transportista>,
-                @InjectRepository(Vehiculo) private readonly vehiculoRepository:Repository<Vehiculo>,
+                @InjectRepository(TipoVehiculo) private readonly vehiculoRepository:Repository<TipoVehiculo>,
                 @InjectRepository(ZonaDeViaje) private readonly zonaDeViajeRepo: Repository<ZonaDeViaje>){}
 
     private readonly logger = new Logger(TransportistaService.name)
@@ -18,11 +18,7 @@ export class TransportistaService {
 
     async obtenerTransportistas():Promise<Transportista[]>{
         const transportistas = await this.transportistaRep.find({
-            relations:[
-                'vehiculos',
-                'vehiculos.tipoVehiculo',
-                'vehiculos.tipoVehiculo.tipoCargas',
-                'zonasDeViaje']})
+            relations:['tipoVehiculos','tipoVehiculos.tipoCargas','zonasDeViaje']})
 
         return transportistas
     }
@@ -31,11 +27,7 @@ export class TransportistaService {
     async obtenerTransportista(idTransportista:number): Promise<Transportista> {
         try {
             const transportistaExist = await this.transportistaRep.findOne({where: {id:idTransportista},
-                relations:[
-                    'vehiculos',
-                    'vehiculos.tipoVehiculo',
-                    'vehiculos.tipoVehiculo.tipoCargas',
-                    'zonasDeViaje']}) 
+                relations:['tipoVehiculos','tipoVehiculo.tipoCargas','zonasDeViaje']})
                                                                                    
             if(!transportistaExist){
                 throw new BadRequestException(`El tipo transportista con el id ${idTransportista} no existe`)
@@ -64,10 +56,10 @@ export class TransportistaService {
                 throw new BadRequestException("Ya existe una empresa con ese nombre")
             }
 
-            const vehiculos = await this.vehiculoRepository.findBy({id: In(body.vehiculos)});
+            const tipoVehiculos = await this.vehiculoRepository.findBy({id: In(body.tipoVehiculos)});
 
-            if (vehiculos.length !== body.vehiculos.length) {
-                throw new BadRequestException("Uno o más vehículos no existen ");
+            if (tipoVehiculos.length !== body.tipoVehiculos.length) {
+                throw new BadRequestException("Uno o más tipos vehículos no existen ");
             }
 
 
@@ -84,7 +76,7 @@ export class TransportistaService {
                 contacto: body.contacto,
                 telefono: body.telefono,
                 costoServicio: body.costoServicio,
-                vehiculos: vehiculos,
+                tipoVehiculos: tipoVehiculos,
                 zonasDeViaje:zonas
             });
 
@@ -110,10 +102,10 @@ export class TransportistaService {
                 throw new BadRequestException(`El transportista con id ${id} no existe`)
             }
 
-            const vehiculos = await this.vehiculoRepository.findBy({ id: In(body.vehiculos) });
+            const tipoVehiculos = await this.vehiculoRepository.findBy({ id: In(body.tipoVehiculos) });
             
-            if (vehiculos.length !== body.vehiculos.length) {
-                throw new BadRequestException("Uno o más vehículos no existen");
+            if (tipoVehiculos.length !== body.tipoVehiculos.length) {
+                throw new BadRequestException("Uno o más tipo vehículos no existen");
             }
 
             const zonas = await this.zonaDeViajeRepo.findBy({ id: In(body.zonasDeViaje) });
@@ -123,7 +115,7 @@ export class TransportistaService {
             }
 
 
-            transportistaExist.vehiculos = vehiculos;
+            transportistaExist.tipoVehiculos = tipoVehiculos;
             transportistaExist.nombre = body.nombre 
             transportistaExist.contacto = body.contacto 
             transportistaExist.telefono = body.telefono         
