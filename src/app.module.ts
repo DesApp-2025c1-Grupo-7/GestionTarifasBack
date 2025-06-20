@@ -8,6 +8,7 @@ import { TransportistaModule } from './transportista/transportista.module';
 import { ZonaDeViajeModule } from './zona-de-viaje/zona-de-viaje.module';
 import { TarifaCostoModule } from './tarifa-costo/tarifa-costo.module';
 import { AdicionalModule } from './adicional/adicional.module';
+import { TarifaAdicionalModule } from './tarifa-adicional/tarifa-adicional.module';
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { AdicionalModule } from './adicional/adicional.module';
     TransportistaModule,
     ZonaDeViajeModule,
     TarifaCostoModule,
-    AdicionalModule ],
+    AdicionalModule,
+    TarifaAdicionalModule ],
   controllers: [],
   providers: [],
 })
