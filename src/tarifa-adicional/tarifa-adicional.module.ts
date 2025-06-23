@@ -7,7 +7,13 @@ import { TarifaCosto } from '../tarifa-costo/entities/tarifa-costo.entity';
 import { Adicional } from '../adicional/entities/adicional.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([TarifaAdicional,Adicional])],
+  imports: [
+    TypeOrmModule.forFeature([
+      TarifaAdicional,
+      TarifaCosto,         
+      Adicional
+    ])
+  ],
   controllers: [TarifaAdicionalController],
   providers: [TarifaAdicionalService],
 })
