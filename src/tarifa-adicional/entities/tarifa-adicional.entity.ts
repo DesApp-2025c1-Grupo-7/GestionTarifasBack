@@ -14,5 +14,5 @@ export class TarifaAdicional {
   adicional: Adicional;
 
   @Column('float', { default: 0 })
-  costoPersonalizado: number;
+  costoPersonalizado: number;ñ
 }
