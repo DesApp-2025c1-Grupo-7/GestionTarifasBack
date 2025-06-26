@@ -1,5 +1,6 @@
+import { TarifaCosto } from "src/tarifa-costo/entities/tarifa-costo.entity";
 import { TipoVehiculo } from "src/tipo-vehiculo/entities/tipo-vehiculo.entity";
-import { Column, DeleteDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, DeleteDateColumn, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 
 @Entity()
@@ -32,4 +33,6 @@ export class TipoCarga {
     @ManyToMany(() => TipoVehiculo, tipoVehiculo => tipoVehiculo.tipoCargas)
     tipoVehiculos: TipoVehiculo[];
 
+    @OneToMany(() => TarifaCosto, tarifaCosto => tarifaCosto.tipoCarga, { cascade: true })
+    tarifaCosto: TarifaCosto[];
 }

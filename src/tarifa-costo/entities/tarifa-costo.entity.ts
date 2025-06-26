@@ -6,6 +6,7 @@ import { ZonaDeViaje } from "../../zona-de-viaje/entities/zona-de-viaje.entity";
 import { Transportista } from "../../transportista/entities/transportista.entity";
 import { TipoVehiculo } from "src/tipo-vehiculo/entities/tipo-vehiculo.entity";
 import { TarifaAdicional } from "../../tarifa-adicional/entities/tarifa-adicional.entity";
+import { TipoCarga } from "src/tipo-carga/entities/tipo-carga.entity";
 
 @Entity()
 export class TarifaCosto {
@@ -24,6 +25,10 @@ export class TarifaCosto {
 
   @ManyToOne(() => Transportista, transportista => transportista.tarifaCosto)
   transportista: Transportista;
+
+  @ManyToOne(() => TipoCarga, tipoCarga => tipoCarga.tarifaCosto)
+  tipoCarga: TipoCarga;
+
 
   @OneToMany(() => TarifaAdicional, tarifaAdicional => tarifaAdicional.tarifa)
   tarifaAdicionales: TarifaAdicional[];

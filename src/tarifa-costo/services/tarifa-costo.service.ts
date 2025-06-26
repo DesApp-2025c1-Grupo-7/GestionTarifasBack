@@ -6,6 +6,7 @@ import { CreateTarifaCostoDTO } from  '../dtos/tarifa-costo.dto';
 import { Transportista } from 'src/transportista/entities/transportista.entity';
 import { ZonaDeViaje } from 'src/zona-de-viaje/entities/zona-de-viaje.entity';
 import { TipoVehiculo } from 'src/tipo-vehiculo/entities/tipo-vehiculo.entity';
+import { TipoCarga } from 'src/tipo-carga/entities/tipo-carga.entity';
 
 @Injectable()
 export class TarifaCostoService {
@@ -13,6 +14,7 @@ export class TarifaCostoService {
     constructor(@InjectRepository(TarifaCosto) private readonly tarifaCostoRepository:Repository<TarifaCosto>,
                 @InjectRepository(Transportista) private readonly transportistaRepository:Repository<Transportista>,
                 @InjectRepository(TipoVehiculo) private readonly vehiculoRepo:Repository<TipoVehiculo>,
+                @InjectRepository(TipoCarga) private readonly cargaRepo:Repository<TipoCarga>,
                 @InjectRepository(ZonaDeViaje) private readonly zonaRepository:Repository<ZonaDeViaje>){}
     
 
@@ -21,7 +23,7 @@ export class TarifaCostoService {
     public async obtenerTarifasCosto(): Promise<TarifaCosto[]> {
 
         const tarifasCosto: TarifaCosto[] = await this.tarifaCostoRepository.find({ 
-            relations: ['zonaDeViaje', 'tipoVehiculo', 'transportista', 'tipoVehiculo.tipoCargas'],
+            relations: ['zonaDeViaje', 'tipoVehiculo', 'transportista', 'tipoVehiculo.tipoCargas', 'tipoCarga'],
         });
 
         return tarifasCosto;
@@ -46,12 +48,18 @@ export class TarifaCostoService {
                 throw new BadRequestException('El transportista especificado no existe.');
             }
 
+            const carga = await this.cargaRepo.findOne({ where: { id: body.tipoCarga } });
+            if (!carga) {
+                throw new BadRequestException('El tipo de carga especificado no existe.');
+            }
+
             const tarifaExistente = await this.tarifaCostoRepository.findOne({
                 where: {
                     tipoVehiculo: { id: body.tipoVehiculo },
                     zonaDeViaje: { id: body.zonaDeViaje },
+                    tipoCarga: {id: body.tipoCarga},
                     transportista: { id: body.transportista },
-                     valor_base: body.valorBase
+                    valor_base: body.valorBase
                 }
             });
 
@@ -63,7 +71,8 @@ export class TarifaCostoService {
                 valor_base: body.valorBase,
                 zonaDeViaje,
                 tipoVehiculo,
-                transportista
+                tipoCarga:carga,
+                transportista,
             });
 
             return await this.tarifaCostoRepository.save(nuevaTarifa);
@@ -98,6 +107,50 @@ export class TarifaCostoService {
         }
     }   
 
+    public async actualizarTarifaCosto(id: number, body: CreateTarifaCostoDTO): Promise<TarifaCosto> {
+        try {
+            const tarifa = await this.tarifaCostoRepository.findOne({ where: { id } });
+
+            if (!tarifa) {
+                throw new NotFoundException('Tarifa de costo no encontrada');
+            }
+
+            const tipoVehiculo = await this.vehiculoRepo.findOne({ where: { id: body.tipoVehiculo } });
+            if (!tipoVehiculo) {
+                throw new BadRequestException('El tipo vehículo especificado no existe.');
+            }
+
+            const zonaDeViaje = await this.zonaRepository.findOne({ where: { id: body.zonaDeViaje } });
+            if (!zonaDeViaje) {
+                throw new BadRequestException('La zona de viaje especificada no existe.');
+            }
+
+            const transportista = await this.transportistaRepository.findOne({ where: { id: body.transportista } });
+            if (!transportista) {
+                throw new BadRequestException('El transportista especificado no existe.');
+            }
+
+            const tipoCarga = await this.cargaRepo.findOne({ where: { id: body.tipoCarga } });
+            if (!tipoCarga) {
+                throw new BadRequestException('El tipo de carga especificado no existe.');
+            }
+
+            tarifa.valor_base = body.valorBase;
+            tarifa.tipoVehiculo = tipoVehiculo;
+            tarifa.zonaDeViaje = zonaDeViaje;
+            tarifa.transportista = transportista;
+            tarifa.tipoCarga = tipoCarga;
+
+            return await this.tarifaCostoRepository.save(tarifa);
+            
+        } catch (error) {
+            this.logger.error('Error al actualizar tarifa de costo', error.stack);
+            if (error instanceof BadRequestException || error instanceof NotFoundException) {
+                throw error;
+            }
+            throw new InternalServerErrorException('Ocurrió un error al actualizar la tarifa de costo.');
+        }
+    }
 
 
 

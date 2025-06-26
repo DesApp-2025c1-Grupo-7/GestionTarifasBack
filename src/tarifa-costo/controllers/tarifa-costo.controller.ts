@@ -1,4 +1,4 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, Get, Param, Patch } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, Get, Param, Patch, Put } from '@nestjs/common';
 import { CreateTarifaCostoDTO } from '../dtos/tarifa-costo.dto'; 
 import { TarifaCostoService } from '../services/tarifa-costo.service';
 import { TarifaCosto } from '../entities/tarifa-costo.entity';
@@ -26,6 +26,11 @@ export class TarifaCostoController {
     async eliminarTarifaCosto(@Param('id') id: number) {
         await this.tarifaCostoService.eliminarTarifaCosto(id);
         return { message: 'Tarifa costo eliminada correctamente' };
+    }
+
+    @Put(':id')
+    async actualizarTarifaCosto(@Param('id') id: number, @Body() body:CreateTarifaCostoDTO) {
+        return await this.tarifaCostoService.actualizarTarifaCosto(id,body);
     }
 }
 
