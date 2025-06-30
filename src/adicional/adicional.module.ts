@@ -5,11 +5,16 @@ import { AdicionalService } from './services/adicional.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TarifaCosto } from 'src/tarifa-costo/entities/tarifa-costo.entity';
 import { TipoCarga } from 'src/tipo-carga/entities/tipo-carga.entity';
+import { TarifaAdicional } from '../tarifa-adicional/entities/tarifa-adicional.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Adicional])], 
+  imports: [
+    TypeOrmModule.forFeature([
+      Adicional,
+      TarifaAdicional, 
+    ]),
+  ],
   controllers: [AdicionalController],
   providers: [AdicionalService],
-  exports: [TypeOrmModule],
 })
 export class AdicionalModule {}

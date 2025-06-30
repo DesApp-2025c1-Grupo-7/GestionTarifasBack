@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Adicional } from '../entities/adicional.entity';
+import { TarifaAdicional } from '../../tarifa-adicional/entities/tarifa-adicional.entity';
 import { CreateAdicionalDTO } from '../dtos/adicional.dto';
 
 @Injectable()
@@ -9,6 +10,10 @@ export class AdicionalService {
   constructor(
     @InjectRepository(Adicional)
     private readonly adicionalRepository: Repository<Adicional>,
+    
+    // Solo necesitamos el repositorio de la tabla intermedia
+    @InjectRepository(TarifaAdicional)
+    private readonly tarifaAdicionalRepository: Repository<TarifaAdicional>,
   ) {}
 
   async create(dto: CreateAdicionalDTO): Promise<Adicional> {
@@ -35,4 +40,38 @@ export class AdicionalService {
   async eliminar(id: number): Promise<void> {
     await this.adicionalRepository.softDelete(id);
   }
-} 
+
+  // --- LÓGICA DEL REPORTE (CÓDIGO FINAL Y SIMPLIFICADO) ---
+
+  async getReporte() {
+    // 1. Obtenemos todos los adicionales base.
+    const adicionales = await this.adicionalRepository.find();
+
+    // 2. Para cada adicional, contamos en cuántas tarifas está.
+    const reporte = await Promise.all(
+      adicionales.map(async (adicional) => {
+        
+        // Esta es la consulta clave: contamos las filas en TarifaAdicional
+        // que corresponden a este ID de adicional.
+        const frecuenciaDeUso = await this.tarifaAdicionalRepository.count({
+          where: { 
+            adicional: { idAdicional: adicional.idAdicional } 
+          }
+        });
+
+        // 3. Ensamblamos el objeto de respuesta simple.
+        return {
+          idAdicional: adicional.idAdicional,
+          descripcion: adicional.descripcion,
+          costo: adicional.costo,
+          frecuenciaDeUso: frecuenciaDeUso, // <-- El dato calculado
+        };
+      }),
+    );
+
+    // Opcional: Ordenamos el resultado final por popularidad (de mayor a menor)
+    reporte.sort((a, b) => b.frecuenciaDeUso - a.frecuenciaDeUso);
+
+    return reporte;
+  }
+}
