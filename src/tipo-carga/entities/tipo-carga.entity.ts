@@ -22,9 +22,6 @@ export class TipoCarga {
     volumenTotal: number
 
     @Column()
-    valorBase: number
-
-    @Column()
     esEspecial: boolean
     
     @DeleteDateColumn({ nullable: true })  

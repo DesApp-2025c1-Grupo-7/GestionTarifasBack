@@ -12,6 +12,7 @@ export class CreateTipoVehiculoDTO {
   @IsString()
   descripcion: string;
 
+  /*
   @ApiProperty({
       example: 15000,
       description: 'Precio base del vehículo',
@@ -19,7 +20,7 @@ export class CreateTipoVehiculoDTO {
   @IsNumber()
   @Type(() => Number)
   precioBase: number;
-
+  */
   @ApiProperty({
     type: [TipoCargaDTO],
     description: 'Lista de tipos de carga compatibles con este tipo de vehículo',

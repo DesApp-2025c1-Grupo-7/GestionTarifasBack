@@ -14,8 +14,6 @@ export class CreateTransportistaDto {
     example: 5000,
     description: 'Costo fijo del servicio de transporte',
   })
-  @IsNumber()
-  costoServicio: number;
 
   @ApiProperty({
     example: 'martinez@transportes.com',
