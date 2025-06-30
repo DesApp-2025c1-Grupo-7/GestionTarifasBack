@@ -75,7 +75,6 @@ export class TransportistaService {
                 nombre: body.nombre,
                 contacto: body.contacto,
                 telefono: body.telefono,
-                costoServicio: body.costoServicio,
                 tipoVehiculos: tipoVehiculos,
                 zonasDeViaje:zonas
             });
@@ -119,7 +118,6 @@ export class TransportistaService {
             transportistaExist.nombre = body.nombre 
             transportistaExist.contacto = body.contacto 
             transportistaExist.telefono = body.telefono         
-            transportistaExist.costoServicio = body.costoServicio
             transportistaExist.zonasDeViaje = zonas
 
             return await this.transportistaRep.save(transportistaExist);

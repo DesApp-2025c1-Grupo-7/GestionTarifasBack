@@ -26,7 +26,7 @@ export class ZonaDeViajeService {
                     origen: body.origen,
                     destino: body.destino,
                     distancia: body.distancia,
-                    costoKilometro: body.costoKilometro,
+                   /* costoKilometro: body.costoKilometro,*/
                 },
             });
 
@@ -38,7 +38,7 @@ export class ZonaDeViajeService {
                 origen: body.origen,
                 destino: body.destino,
                 distancia: body.distancia,
-                costoKilometro: body.costoKilometro,
+               /* costoKilometro: body.costoKilometro,*/
             });
 
             return await this.zonaRepository.save(nuevaZona);
@@ -67,7 +67,7 @@ export class ZonaDeViajeService {
             zonaExist.origen = body.origen
             zonaExist.destino = body.destino
             zonaExist.distancia = body.distancia
-            zonaExist.costoKilometro = body.costoKilometro
+         /*   zonaExist.costoKilometro = body.costoKilometro */
 
             return await this.zonaRepository.save(zonaExist)
 

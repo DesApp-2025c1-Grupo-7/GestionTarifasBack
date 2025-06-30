@@ -13,9 +13,6 @@ export class Transportista {
   nombre: string;
 
   @Column()
-  costoServicio: number;
-
-  @Column()
   contacto: string;
 
   @Column()

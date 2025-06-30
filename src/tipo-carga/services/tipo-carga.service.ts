@@ -49,7 +49,6 @@ export class TipoCargaService {
                 c.requisitoEspecial === body.requisitoEspecial &&
                 c.pesoTotal === body.pesoTotal &&
                 c.volumenTotal === body.volumenTotal &&
-                c.valorBase === body.valorBase &&
                 c.esEspecial === body.esEspecial
             );
 
@@ -83,7 +82,6 @@ export class TipoCargaService {
             cargaExistente.esEspecial = body.esEspecial;
             cargaExistente.pesoTotal = body.pesoTotal;
             cargaExistente.volumenTotal = body.volumenTotal;
-            cargaExistente.valorBase = body.valorBase;
 
             // Solo actualiza si viene en el body
             if (body.requisitoEspecial !== undefined) {

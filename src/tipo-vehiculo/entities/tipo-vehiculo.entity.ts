@@ -12,10 +12,10 @@ export class TipoVehiculo {
 
     @Column()
     descripcion: string
-
+    /*
     @Column()
     precioBase: number;
-
+    */
     @ManyToMany(() => TipoCarga, carga => carga.tipoVehiculos, { cascade: true})
     @JoinTable({
         name: 'vehiculo_carga'

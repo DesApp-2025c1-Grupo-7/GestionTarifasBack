@@ -28,12 +28,6 @@ export class TipoCargaDTO {
   volumenTotal: number;
 
   @ApiProperty()
-  @IsNumber()
-  @Type(() => Number)
-  @Min(0)
-  valorBase: number;
-
-  @ApiProperty()
   @IsBoolean()
   @Type(() => Boolean)
   esEspecial: boolean;

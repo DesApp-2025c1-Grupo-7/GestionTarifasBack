@@ -23,11 +23,13 @@ export class CreateZonaDeViaje {
   })
   @IsInt()
   distancia: number;
-
+  /*
   @ApiProperty({
     example: 150,
     description: 'Costo por kilómetro en la ruta especificada',
   })
+  
   @IsInt()
   costoKilometro: number;
+  */
 }

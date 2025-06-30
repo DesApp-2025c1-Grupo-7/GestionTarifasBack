@@ -19,8 +19,10 @@ export class ZonaDeViaje {
   @Column()
   distancia: number;
 
+  /*
   @Column()
   costoKilometro: number;
+  */
 
   @OneToMany(() => TarifaCosto, tarifaCosto => tarifaCosto.zonaDeViaje)
   tarifaCosto: TarifaCosto[];
