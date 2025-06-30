@@ -16,6 +16,11 @@ export class AdicionalController {
     return this.adicionalService.findAll();
   }
 
+  @Get('reporte')
+  async getReporte() {
+    return this.adicionalService.getReporte();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.adicionalService.findOne(+id);
