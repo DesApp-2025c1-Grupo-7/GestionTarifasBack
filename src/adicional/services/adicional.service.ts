@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Adicional } from '../entities/adicional.entity';
 import { TarifaAdicional } from '../../tarifa-adicional/entities/tarifa-adicional.entity';
 import { CreateAdicionalDTO } from '../dtos/adicional.dto';
+import { TarifaCosto } from '../../tarifa-costo/entities/tarifa-costo.entity'; // Importar
 
 @Injectable()
 export class AdicionalService {
@@ -74,4 +75,21 @@ export class AdicionalService {
 
     return reporte;
   }
+
+    async getTarifasForAdicional(idAdicional: number): Promise<TarifaCosto[]> {
+    const vinculos = await this.tarifaAdicionalRepository.find({
+        where: { adicional: { idAdicional: idAdicional } },
+        // Traemos todas las relaciones de la tarifa para mostrarla completa en el frontend
+        relations: [
+            'tarifa',
+            'tarifa.tipoVehiculo',
+            'tarifa.zonaDeViaje',
+            'tarifa.transportista',
+            'tarifa.tipoCarga'
+        ],
+    });
+    // Devolvemos un array que contiene solo los objetos de TarifaCosto
+    return vinculos.map(vinculo => vinculo.tarifa).filter(Boolean); // .filter(Boolean) elimina posibles nulos
+  }
+
 }

@@ -26,6 +26,21 @@ export class AdicionalController {
     return this.adicionalService.findOne(+id);
   }
 
+  @Get('reporte/uso')
+  getUsageReport() {
+    return this.adicionalService.getReporte(); // deberia ser usageReport pero dejamos asi xD
+  }
+
+  /**
+   * Endpoint para obtener las tarifas asociadas a un adicional.
+   * Se accederá a través de GET http://localhost:3001/adicional/:id/tarifas
+   */
+  @Get(':id/tarifas')
+  getTarifasForAdicional(@Param('id') id: string) {
+    // El '+' convierte el string del parámetro a número
+    return this.adicionalService.getTarifasForAdicional(+id);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateAdicionalDto: CreateAdicionalDTO) {
     return this.adicionalService.update(+id, updateAdicionalDto);
