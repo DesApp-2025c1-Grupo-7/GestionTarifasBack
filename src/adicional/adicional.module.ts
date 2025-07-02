@@ -7,6 +7,8 @@ import { TarifaCosto } from 'src/tarifa-costo/entities/tarifa-costo.entity';
 import { TipoCarga } from 'src/tipo-carga/entities/tipo-carga.entity';
 import { TarifaAdicional } from '../tarifa-adicional/entities/tarifa-adicional.entity';
 
+
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([
