@@ -26,5 +26,11 @@ export class TarifaAdicionalController {
     return this.service.update(+id, dto);
   }
 
-  
+  // En tarifa-adicional.controller.ts
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.service.remove(+id);
+  }
 }
+  
+

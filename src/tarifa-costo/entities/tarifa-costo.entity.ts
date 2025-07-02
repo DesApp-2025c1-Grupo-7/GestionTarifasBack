@@ -16,6 +16,9 @@ export class TarifaCosto {
   @Column()
   valor_base: number;
 
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  costo_total: number;
+
 
   @ManyToOne(() => TipoVehiculo, tipoVehiculo => tipoVehiculo.tarifaCosto)
   tipoVehiculo: TipoVehiculo;
