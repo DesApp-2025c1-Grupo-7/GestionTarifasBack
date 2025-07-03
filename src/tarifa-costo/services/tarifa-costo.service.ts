@@ -61,14 +61,10 @@ export class TarifaCostoService {
                 throw new BadRequestException('Ya existe una tarifa de costo con las mismas características.');
             }
 
-            // --- LÓGICA DE CÁLCULO DE TOTAL ---
             let costoTotalCalculado = dataTarifa.valorBase;
             if (adicionales && adicionales.length > 0) {
-                for (const adicionalId of adicionales) {
-                    const adicional = await this.adicionalRepo.findOneBy({ idAdicional: adicionalId });
-                    if (adicional) {
-                        costoTotalCalculado += Number(adicional.costo);
-                    }
+                for (const adicionalDto of adicionales) {
+                    costoTotalCalculado += Number(adicionalDto.costo);
                 }
             }
 
@@ -78,18 +74,21 @@ export class TarifaCostoService {
                 tipoVehiculo,
                 tipoCarga: carga,
                 transportista,
-                costo_total: costoTotalCalculado, // Se guarda el total
+                costo_total: costoTotalCalculado,
             });
 
             const tarifaGuardada = await this.tarifaCostoRepository.save(nuevaTarifa);
 
             if (adicionales && adicionales.length > 0) {
-                for (const adicionalId of adicionales) {
-                    const adicional = await this.adicionalRepo.findOneBy({ idAdicional: adicionalId });
+                for (const adicionalDto of adicionales) {
+                    const adicional = await this.adicionalRepo.findOneBy({ idAdicional: adicionalDto.idAdicional });
                     if (adicional) {
+                        // --- CORRECCIÓN FINAL ---
+                        // Usamos la propiedad `costoPersonalizado` como está definida en la entidad
                         const nuevoVinculo = this.tarifaAdicionalRepo.create({
                             tarifa: tarifaGuardada,
                             adicional: adicional,
+                            costoPersonalizado: adicionalDto.costo, 
                         });
                         await this.tarifaAdicionalRepo.save(nuevoVinculo);
                     }
@@ -126,14 +125,10 @@ export class TarifaCostoService {
             const tipoCarga = await this.cargaRepo.findOneBy({ id: dataTarifa.tipoCarga });
             if (!tipoCarga) throw new BadRequestException('El tipo de carga especificado no existe.');
 
-            // --- LÓGICA DE RE-CÁLCULO DE TOTAL ---
             let costoTotalCalculado = dataTarifa.valorBase;
             if (adicionales && adicionales.length > 0) {
-                for (const adicionalId of adicionales) {
-                    const adicional = await this.adicionalRepo.findOneBy({ idAdicional: adicionalId });
-                    if (adicional) {
-                        costoTotalCalculado += Number(adicional.costo);
-                    }
+                for (const adicionalDto of adicionales) {
+                    costoTotalCalculado += Number(adicionalDto.costo);
                 }
             }
 
@@ -142,18 +137,21 @@ export class TarifaCostoService {
             tarifa.zonaDeViaje = zonaDeViaje;
             tarifa.transportista = transportista;
             tarifa.tipoCarga = tipoCarga;
-            tarifa.costo_total = costoTotalCalculado; // Se actualiza el total
+            tarifa.costo_total = costoTotalCalculado;
             
             await this.tarifaCostoRepository.save(tarifa);
 
             if (adicionales) {
                 await this.tarifaAdicionalRepo.delete({ tarifa: { id: id } });
-                for (const adicionalId of adicionales) {
-                    const adicional = await this.adicionalRepo.findOneBy({ idAdicional: adicionalId });
+                for (const adicionalDto of adicionales) {
+                    const adicional = await this.adicionalRepo.findOneBy({ idAdicional: adicionalDto.idAdicional });
                     if (adicional) {
+                        // --- CORRECCIÓN FINAL ---
+                        // Usamos la propiedad `costoPersonalizado` como está definida en la entidad
                         const nuevoVinculo = this.tarifaAdicionalRepo.create({
                             tarifa: tarifa,
                             adicional: adicional,
+                            costoPersonalizado: adicionalDto.costo,
                         });
                         await this.tarifaAdicionalRepo.save(nuevoVinculo);
                     }

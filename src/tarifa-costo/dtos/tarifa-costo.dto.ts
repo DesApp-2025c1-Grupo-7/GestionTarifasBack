@@ -1,5 +1,16 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsNumber, IsOptional, IsArray } from "class-validator"; // CAMBIO: IsOptional y IsArray importados
+// --- AJUSTE: Se importan nuevos validadores ---
+import { IsNotEmpty, IsNumber, IsOptional, IsArray, ValidateNested } from "class-validator";
+import { Type } from "class-transformer";
+
+// --- AJUSTE: Se crea una pequeña clase para validar cada objeto del array ---
+class AdicionalConCostoDto {
+  @IsNumber()
+  idAdicional: number;
+
+  @IsNumber()
+  costo: number;
+}
 
 export class CreateTarifaCostoDTO {
 
@@ -28,14 +39,15 @@ export class CreateTarifaCostoDTO {
   @IsNumber()
   tipoCarga: number;
 
-  // CAMBIO: Se agrega el campo para recibir los IDs de adicionales.
+  // --- AJUSTE CLAVE: Se actualiza la definición de 'adicionales' ---
   @ApiProperty({
-    example: [1, 5],
-    description: 'Array de IDs de los adicionales a vincular.',
+    example: [{ idAdicional: 1, costo: 50.50 }, { idAdicional: 5, costo: 120.00 }],
+    description: 'Array de objetos, cada uno con el ID del adicional y su costo específico para esta tarifa.',
     required: false,
   })
   @IsArray()
-  @IsNumber({}, { each: true })
   @IsOptional()
-  adicionales?: number[];
+  @ValidateNested({ each: true }) // Valida cada objeto del array
+  @Type(() => AdicionalConCostoDto) // Especifica el tipo de objeto esperado
+  adicionales?: AdicionalConCostoDto[];
 }
