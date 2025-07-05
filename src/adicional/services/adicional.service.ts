@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm'; // IsNull es necesario
 import { Adicional } from '../entities/adicional.entity';
 import { TarifaAdicional } from '../../tarifa-adicional/entities/tarifa-adicional.entity';
 import { CreateAdicionalDTO } from '../dtos/adicional.dto';
-import { TarifaCosto } from '../../tarifa-costo/entities/tarifa-costo.entity'; // Importar
+import { TarifaCosto } from '../../tarifa-costo/entities/tarifa-costo.entity';
 
 @Injectable()
 export class AdicionalService {
@@ -12,11 +12,11 @@ export class AdicionalService {
     @InjectRepository(Adicional)
     private readonly adicionalRepository: Repository<Adicional>,
     
-    // Solo necesitamos el repositorio de la tabla intermedia
     @InjectRepository(TarifaAdicional)
     private readonly tarifaAdicionalRepository: Repository<TarifaAdicional>,
   ) {}
 
+  // --- Métodos CRUD ---
   async create(dto: CreateAdicionalDTO): Promise<Adicional> {
     const adicional = this.adicionalRepository.create(dto);
     return await this.adicionalRepository.save(adicional);
@@ -39,47 +39,56 @@ export class AdicionalService {
   }
 
   async eliminar(id: number): Promise<void> {
-    await this.adicionalRepository.softDelete(id);
+    const adicional = await this.findOne(id);
+    await this.adicionalRepository.softRemove(adicional);
   }
 
-  // --- LÓGICA DEL REPORTE (CÓDIGO FINAL Y SIMPLIFICADO) ---
-
+  // --- LÓGICA DEL REPORTE ---
   async getReporte() {
-    // 1. Obtenemos todos los adicionales base.
+    // 1. Obtenemos todos los adicionales.
     const adicionales = await this.adicionalRepository.find();
 
-    // 2. Para cada adicional, contamos en cuántas tarifas está.
+    // 2. Para cada adicional, buscamos sus relaciones y las filtramos en el código.
     const reporte = await Promise.all(
       adicionales.map(async (adicional) => {
         
-        // Esta es la consulta clave: contamos las filas en TarifaAdicional
-        // que corresponden a este ID de adicional.
-        const frecuenciaDeUso = await this.tarifaAdicionalRepository.count({
+        // Buscamos todos los vínculos para este adicional, incluyendo la tarifa relacionada
+        const vinculos = await this.tarifaAdicionalRepository.find({
           where: { 
-            adicional: { idAdicional: adicional.idAdicional } 
-          }
+            adicional: { idAdicional: adicional.idAdicional }
+          },
+          // Cargamos la relación con TarifaCosto para poder acceder a 'deletedAt'
+          relations: ['tarifa'] 
         });
 
-        // 3. Ensamblamos el objeto de respuesta simple.
+        // Filtramos en memoria: nos quedamos solo con los vínculos cuya tarifa NO esté borrada.
+        const vinculosActivos = vinculos.filter(v => v.tarifa && v.tarifa.deletedAt === null); //deletedAt es null si no está borrada
+
+        // La frecuencia es la cantidad de vínculos activos.
+        const frecuenciaDeUso = vinculosActivos.length;
+
         return {
           idAdicional: adicional.idAdicional,
           descripcion: adicional.descripcion,
           costo: adicional.costo,
-          frecuenciaDeUso: frecuenciaDeUso, // <-- El dato calculado
+          frecuenciaDeUso: frecuenciaDeUso,
         };
       }),
     );
 
-    // Opcional: Ordenamos el resultado final por popularidad (de mayor a menor)
     reporte.sort((a, b) => b.frecuenciaDeUso - a.frecuenciaDeUso);
 
     return reporte;
   }
 
-    async getTarifasForAdicional(idAdicional: number): Promise<TarifaCosto[]> {
+  // --- LÓGICA DE OBTENER TARIFAS ---
+  async getTarifasForAdicional(idAdicional: number): Promise<TarifaCosto[]> {
     const vinculos = await this.tarifaAdicionalRepository.find({
-        where: { adicional: { idAdicional: idAdicional } },
-        // Traemos todas las relaciones de la tarifa para mostrarla completa en el frontend
+        where: { 
+            adicional: { idAdicional: idAdicional },
+            // El filtro en la relación funciona bien con el método .find()
+            tarifa: { deletedAt: IsNull() } 
+        },
         relations: [
             'tarifa',
             'tarifa.tipoVehiculo',
@@ -88,8 +97,7 @@ export class AdicionalService {
             'tarifa.tipoCarga'
         ],
     });
-    // Devolvemos un array que contiene solo los objetos de TarifaCosto
-    return vinculos.map(vinculo => vinculo.tarifa).filter(Boolean); // .filter(Boolean) elimina posibles nulos
+    
+    return vinculos.map(vinculo => vinculo.tarifa).filter(Boolean);
   }
-
 }
