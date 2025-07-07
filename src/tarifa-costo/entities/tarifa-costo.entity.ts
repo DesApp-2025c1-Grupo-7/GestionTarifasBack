@@ -41,5 +41,12 @@ export class TarifaCosto {
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
+  
+  // columnas de vigencia de tarifas
+  @Column({ type: 'date', default: '2024-01-01' }) // <-- CAMBIO: Se establece un default
+  vigenciaDesde: Date;
+
+  @Column({ type: 'date', nullable: true, default: null }) // Se permite que sea nula
+  vigenciaHasta: Date;
 
 }                           

@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-// --- AJUSTE: Se importan nuevos validadores ---
-import { IsNotEmpty, IsNumber, IsOptional, IsArray, ValidateNested } from "class-validator";
+// --- AJUSTE: Se agrego is date string para validar fechas ---
+import { IsNotEmpty, IsNumber, IsOptional, IsArray, ValidateNested, IsDateString } from "class-validator";
 import { Type } from "class-transformer";
 
 // --- AJUSTE: Se crea una pequeña clase para validar cada objeto del array ---
@@ -38,6 +38,22 @@ export class CreateTarifaCostoDTO {
   @IsNotEmpty()
   @IsNumber()
   tipoCarga: number;
+
+  //-- AJUSTE: Se agrega propiedad para la fecha de vigencia de la tarifa ---
+
+  @ApiProperty({ example: '2025-08-01', description: 'Fecha en que la tarifa entra en vigencia (YYYY-MM-DD).' })
+  @IsNotEmpty()
+  @IsDateString()
+  vigenciaDesde: Date;
+
+  @ApiProperty({ 
+    example: '2025-12-31', 
+    description: 'Fecha en que la tarifa deja de ser válida (opcional).',
+    required: false
+  })
+  @IsOptional()
+  @IsDateString()
+  vigenciaHasta?: Date;
 
   // --- AJUSTE CLAVE: Se actualiza la definición de 'adicionales' ---
   @ApiProperty({

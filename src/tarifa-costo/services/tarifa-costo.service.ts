@@ -36,6 +36,11 @@ export class TarifaCostoService {
         const { adicionales, ...dataTarifa } = body;
         
         try {
+            // --- LÓGICA DE VIGENCIA: Validación de fechas ---
+            if (dataTarifa.vigenciaHasta && new Date(dataTarifa.vigenciaHasta) < new Date(dataTarifa.vigenciaDesde)) {
+                throw new BadRequestException('La fecha de fin de vigencia no puede ser anterior a la fecha de inicio.');
+            }
+
             const tipoVehiculo = await this.vehiculoRepo.findOneBy({ id: dataTarifa.tipoVehiculo });
             if (!tipoVehiculo) throw new BadRequestException('El tipo vehículo especificado no existe.');
 
@@ -75,6 +80,8 @@ export class TarifaCostoService {
                 tipoCarga: carga,
                 transportista,
                 costo_total: costoTotalCalculado,
+                vigenciaDesde: dataTarifa.vigenciaDesde,
+                vigenciaHasta: dataTarifa.vigenciaHasta,
             });
 
             const tarifaGuardada = await this.tarifaCostoRepository.save(nuevaTarifa);
@@ -110,6 +117,11 @@ export class TarifaCostoService {
         const { adicionales, ...dataTarifa } = body;
 
         try {
+            // --- LÓGICA DE VIGENCIA: Validación de fechas ---
+            if (dataTarifa.vigenciaHasta && new Date(dataTarifa.vigenciaHasta) < new Date(dataTarifa.vigenciaDesde)) {
+                throw new BadRequestException('La fecha de fin de vigencia no puede ser anterior a la fecha de inicio.');
+            }
+            
             const tarifa = await this.tarifaCostoRepository.findOneBy({ id });
             if (!tarifa) throw new NotFoundException('Tarifa de costo no encontrada');
 
