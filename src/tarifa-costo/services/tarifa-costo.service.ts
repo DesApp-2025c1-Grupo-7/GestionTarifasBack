@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, InternalServerErrorException, Logger, 
 import { InjectRepository } from '@nestjs/typeorm';
 import { TarifaCosto } from '../entities/tarifa-costo.entity';
 import { Repository } from 'typeorm';
-import { CreateTarifaCostoDTO } from  '../dtos/tarifa-costo.dto';
+import { CreateTarifaCostoDTO } from '../dtos/tarifa-costo.dto';
 import { Transportista } from 'src/transportista/entities/transportista.entity';
 import { ZonaDeViaje } from 'src/zona-de-viaje/entities/zona-de-viaje.entity';
 import { TipoVehiculo } from 'src/tipo-vehiculo/entities/tipo-vehiculo.entity';
@@ -21,20 +21,28 @@ export class TarifaCostoService {
         @InjectRepository(ZonaDeViaje) private readonly zonaRepository: Repository<ZonaDeViaje>,
         @InjectRepository(Adicional) private readonly adicionalRepo: Repository<Adicional>,
         @InjectRepository(TarifaAdicional) private readonly tarifaAdicionalRepo: Repository<TarifaAdicional>
-    ) {}
-    
+    ) { }
+
     private readonly logger = new Logger(TarifaCostoService.name);
 
     public async obtenerTarifasCosto(): Promise<TarifaCosto[]> {
-        const tarifasCosto: TarifaCosto[] = await this.tarifaCostoRepository.find({ 
-            relations: ['zonaDeViaje', 'tipoVehiculo', 'transportista', 'tipoCarga', 'tarifaAdicionales', 'tarifaAdicionales.adicional'],
+        const tarifasCosto: TarifaCosto[] = await this.tarifaCostoRepository.find({
+            relations: [
+                'zonaDeViaje',
+                'tipoVehiculo',
+                'transportista',
+                'tipoCarga',
+                'tarifaAdicionales',
+                'tarifaAdicionales.adicional'
+            ],
+            withDeleted: true
         });
         return tarifasCosto;
     }
 
     public async crearTarifaCosto(body: CreateTarifaCostoDTO): Promise<TarifaCosto> {
         const { adicionales, ...dataTarifa } = body;
-        
+
         try {
             // --- LÓGICA DE VIGENCIA: Validación de fechas ---
             if (dataTarifa.vigenciaHasta && new Date(dataTarifa.vigenciaHasta) < new Date(dataTarifa.vigenciaDesde)) {
@@ -95,7 +103,7 @@ export class TarifaCostoService {
                         const nuevoVinculo = this.tarifaAdicionalRepo.create({
                             tarifa: tarifaGuardada,
                             adicional: adicional,
-                            costoPersonalizado: adicionalDto.costo, 
+                            costoPersonalizado: adicionalDto.costo,
                         });
                         await this.tarifaAdicionalRepo.save(nuevoVinculo);
                     }
@@ -121,7 +129,7 @@ export class TarifaCostoService {
             if (dataTarifa.vigenciaHasta && new Date(dataTarifa.vigenciaHasta) < new Date(dataTarifa.vigenciaDesde)) {
                 throw new BadRequestException('La fecha de fin de vigencia no puede ser anterior a la fecha de inicio.');
             }
-            
+
             const tarifa = await this.tarifaCostoRepository.findOneBy({ id });
             if (!tarifa) throw new NotFoundException('Tarifa de costo no encontrada');
 
@@ -150,7 +158,7 @@ export class TarifaCostoService {
             tarifa.transportista = transportista;
             tarifa.tipoCarga = tipoCarga;
             tarifa.costo_total = costoTotalCalculado;
-            
+
             await this.tarifaCostoRepository.save(tarifa);
 
             if (adicionales) {
@@ -171,7 +179,7 @@ export class TarifaCostoService {
             }
 
             return this.obtenerTarifaPorId(id);
-            
+
         } catch (error) {
             this.logger.error('Error al actualizar tarifa de costo', error.stack);
             if (error instanceof BadRequestException || error instanceof NotFoundException) {
@@ -187,9 +195,9 @@ export class TarifaCostoService {
         if (!tarifa) {
             throw new NotFoundException('Tarifa de costo no encontrada');
         }
-        
+
         await this.tarifaCostoRepository.softDelete(id);
-    }   
+    }
 
     private async obtenerTarifaPorId(id: number): Promise<TarifaCosto> {
         const tarifa = await this.tarifaCostoRepository.findOne({
