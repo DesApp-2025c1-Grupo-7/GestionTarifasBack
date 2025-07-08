@@ -28,16 +28,6 @@ export class TarifaCostoService {
     public async obtenerTarifasCosto(): Promise<TarifaCosto[]> {
         const tarifasCosto: TarifaCosto[] = await this.tarifaCostoRepository.find({
             relations: [
-<<<<<<< HEAD
-            'zonaDeViaje',
-            'tipoVehiculo',
-            'transportista',
-            'tipoCarga',
-            'tarifaAdicionales',
-            'tarifaAdicionales.adicional'
-            ],
-            withDeleted: true 
-=======
                 'zonaDeViaje',
                 'tipoVehiculo',
                 'transportista',
@@ -46,7 +36,6 @@ export class TarifaCostoService {
                 'tarifaAdicionales.adicional'
             ],
             withDeleted: true
->>>>>>> 2b016831cfca0a274f72763132c80753217c03f8
         });
    	return tarifasCosto;
    }
@@ -142,10 +131,7 @@ export class TarifaCostoService {
             if (dataTarifa.vigenciaHasta && new Date(dataTarifa.vigenciaHasta) < new Date(dataTarifa.vigenciaDesde)) {
                 throw new BadRequestException('La fecha de fin de vigencia no puede ser anterior a la fecha de inicio.');
             }
-<<<<<<< HEAD
             */} // Comentado porque no se usa en la lógica actual
-=======
->>>>>>> 2b016831cfca0a274f72763132c80753217c03f8
 
             const tarifa = await this.tarifaCostoRepository.findOneBy({ id });
             if (!tarifa) throw new NotFoundException('Tarifa de costo no encontrada');
