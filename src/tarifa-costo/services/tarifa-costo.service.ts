@@ -37,17 +37,18 @@ export class TarifaCostoService {
             ],
             withDeleted: true
         });
-        return tarifasCosto;
-    }
-
+   	return tarifasCosto;
+   }
     public async crearTarifaCosto(body: CreateTarifaCostoDTO): Promise<TarifaCosto> {
         const { adicionales, ...dataTarifa } = body;
 
         try {
             // --- LÓGICA DE VIGENCIA: Validación de fechas ---
+            {/*
             if (dataTarifa.vigenciaHasta && new Date(dataTarifa.vigenciaHasta) < new Date(dataTarifa.vigenciaDesde)) {
                 throw new BadRequestException('La fecha de fin de vigencia no puede ser anterior a la fecha de inicio.');
             }
+            */} // Comentado porque no se usa en la lógica actual
 
             const tipoVehiculo = await this.vehiculoRepo.findOneBy({ id: dataTarifa.tipoVehiculo });
             if (!tipoVehiculo) throw new BadRequestException('El tipo vehículo especificado no existe.');
@@ -125,10 +126,12 @@ export class TarifaCostoService {
         const { adicionales, ...dataTarifa } = body;
 
         try {
-            // --- LÓGICA DE VIGENCIA: Validación de fechas ---
+            // --- LÓGICA DE VIGENCIA: Validación de fechas --- 
+            {/*
             if (dataTarifa.vigenciaHasta && new Date(dataTarifa.vigenciaHasta) < new Date(dataTarifa.vigenciaDesde)) {
                 throw new BadRequestException('La fecha de fin de vigencia no puede ser anterior a la fecha de inicio.');
             }
+            */} // Comentado porque no se usa en la lógica actual
 
             const tarifa = await this.tarifaCostoRepository.findOneBy({ id });
             if (!tarifa) throw new NotFoundException('Tarifa de costo no encontrada');
