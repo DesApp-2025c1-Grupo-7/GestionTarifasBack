@@ -41,17 +41,22 @@ export class CreateTarifaCostoDTO {
 
   //-- AJUSTE: Se agrega propiedad para la fecha de vigencia de la tarifa ---
 
-  @ApiProperty({ example: '2025-08-01', description: 'Fecha en que la tarifa entra en vigencia (YYYY-MM-DD).' })
+  @ApiProperty({ 
+    example: '2025-08-01', 
+    description: 'Fecha en que la tarifa entra en vigencia (YYYY-MM-DD).',
+    required: false})
   @IsNotEmpty()
   @IsDateString()
+  @IsOptional()
   vigenciaDesde: Date;
+  
 
   @ApiProperty({ 
     example: '2025-12-31', 
     description: 'Fecha en que la tarifa deja de ser válida (opcional).',
-    required: false
+    required: false 
   })
-  @IsOptional()
+  @IsOptional() 
   @IsDateString()
   vigenciaHasta?: Date;
 
