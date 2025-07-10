@@ -44,13 +44,14 @@ export class TipoCargaService {
         try {
             const cargas = await this.cargaRepository.find();
 
-            const cargaExistente = cargas.find(c =>
-                c.categoria === body.categoria &&
-                c.requisitoEspecial === body.requisitoEspecial &&
-                c.pesoTotal === body.pesoTotal &&
-                c.volumenTotal === body.volumenTotal &&
-                c.esEspecial === body.esEspecial
-            );
+            const cargaExistente = await this.cargaRepository.findOne({
+                where: {
+                    categoria: body.categoria,
+                    pesoTotal: body.pesoTotal,
+                    volumenTotal: body.volumenTotal,
+                    esEspecial: body.esEspecial
+                }
+            });
 
             if (cargaExistente) {
                 throw new ConflictException('Ya existe un tipo de carga con esos mismos valores.');
@@ -61,8 +62,8 @@ export class TipoCargaService {
         } catch (error) {
             this.logger.error('Error al guardar el tipo de carga', error.stack);
 
-            if (error instanceof ConflictException){
-                throw error
+            if (error instanceof ConflictException) {
+                throw error;
             }
 
             throw new InternalServerErrorException('Ocurrió un error al guardar el tipo de carga. Intente nuevamente.');

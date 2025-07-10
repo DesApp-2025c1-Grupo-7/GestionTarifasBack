@@ -71,6 +71,7 @@ export class TarifaCostoService {
                     zonaDeViaje: { id: dataTarifa.zonaDeViaje },
                     tipoCarga: { id: dataTarifa.tipoCarga },
                     transportista: { id: dataTarifa.transportista },
+                    valor_base:body.valorBase,
                 }
             });
 
