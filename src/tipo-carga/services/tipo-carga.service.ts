@@ -42,6 +42,8 @@ export class TipoCargaService {
 
     public async crearTipoCarga(body: TipoCargaDTO): Promise<TipoCarga> {
         try {
+
+            const cargas = await this.cargaRepository.find();
             const cargaExistente = await this.cargaRepository.findOne({
                 where: {
                     categoria: body.categoria,

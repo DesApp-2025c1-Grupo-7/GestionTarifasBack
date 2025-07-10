@@ -1,4 +1,4 @@
-import { CreateDateColumn, Entity } from "typeorm";
+import { CreateDateColumn, Entity, UpdateDateColumn } from "typeorm";
 import { Column, PrimaryGeneratedColumn } from "typeorm";
 import { DeleteDateColumn } from "typeorm/decorator/columns/DeleteDateColumn";
 import { ManyToOne, OneToMany } from "typeorm";
@@ -19,6 +19,8 @@ export class TarifaCosto {
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   costo_total: number;
 
+  @Column({ type: 'int', default: 1 })
+  version: number;
 
   @ManyToOne(() => TipoVehiculo, tipoVehiculo => tipoVehiculo.tarifaCosto)
   tipoVehiculo: TipoVehiculo;
@@ -32,7 +34,6 @@ export class TarifaCosto {
   @ManyToOne(() => TipoCarga, tipoCarga => tipoCarga.tarifaCosto)
   tipoCarga: TipoCarga;
 
-
   @OneToMany(() => TarifaAdicional, tarifaAdicional => tarifaAdicional.tarifa)
   tarifaAdicionales: TarifaAdicional[];
 
@@ -41,12 +42,15 @@ export class TarifaCosto {
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
+  
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt: Date;
 
-  // columnas de vigencia de tarifas
-  @Column({ type: 'date', nullable: true, default: null }) // <-- CAMBIO: Se establece un default
-  vigenciaDesde: Date;
+  // --- CAMBIO: Se ajusta el tipo para permitir null ---
+  @Column({ type: 'date', nullable: true, default: null })
+  vigenciaDesde: Date | null;
 
-  @Column({ type: 'date', nullable: true, default: null }) // Se permite que sea nula
-  vigenciaHasta: Date;
-
-}                           
+  // --- CAMBIO: Se ajusta el tipo para permitir null ---
+  @Column({ type: 'date', nullable: true, default: null })
+  vigenciaHasta: Date | null;
+}

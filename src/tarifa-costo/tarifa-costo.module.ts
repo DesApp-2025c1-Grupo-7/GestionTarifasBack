@@ -12,10 +12,14 @@ import { TipoCarga } from 'src/tipo-carga/entities/tipo-carga.entity';
 import { TarifaAdicional } from '../tarifa-adicional/entities/tarifa-adicional.entity';
 import { Adicional } from 'src/adicional/entities/adicional.entity';
 
+// 1. Importar la nueva entidad de historial
+import { TarifaCostoHistorial } from './entities/tarifa-costo-historial.entity';
+
 @Module({
     imports: [
       TypeOrmModule.forFeature([
         TarifaCosto,
+        TarifaCostoHistorial, // CAMBIO: Agregar la entidad de historial
         Transportista,
         TipoVehiculo,           
         ZonaDeViaje,

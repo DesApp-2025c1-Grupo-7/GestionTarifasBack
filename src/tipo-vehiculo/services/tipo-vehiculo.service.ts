@@ -85,6 +85,8 @@ export class TipoVehiculoService {
             }
 
             // Crear y guardar
+
+
             const nuevoTipoVehiculo = this.tipoVehiculoRep.create({
                 descripcion,
                 tipoCargas: cargasRelacionadas,
@@ -94,11 +96,13 @@ export class TipoVehiculoService {
             
         } catch (error) {
             this.logger.error('Error al crear tipo de vehículo', error.stack);
-    
+
+      
             if (error instanceof BadRequestException || error instanceof ConflictException) {
                 throw error;
             }
-    
+      
+
             throw new InternalServerErrorException('No se pudo crear el tipo de vehículo');
         }
     }
@@ -149,7 +153,7 @@ export class TipoVehiculoService {
 
             tipoVehiculo.descripcion = descripcion;
             tipoVehiculo.tipoCargas = cargasRelacionadas;
-          /*  tipoVehiculo.precioBase = precioBase*/
+          
 
             return await this.tipoVehiculoRep.save(tipoVehiculo);
 
