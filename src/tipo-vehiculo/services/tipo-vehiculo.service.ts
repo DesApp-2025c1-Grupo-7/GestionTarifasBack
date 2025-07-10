@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { TipoVehiculo } from '../entities/tipo-vehiculo.entity';
 import { In, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -48,40 +48,58 @@ export class TipoVehiculoService {
 
 
 
-
     async crearTipoVehiculo(body: CreateTipoVehiculoDTO): Promise<TipoVehiculo> {
         try {
-            const { descripcion, tipoCargas /*, precioBase */ } = body;
+            const { descripcion, tipoCargas } = body;
 
-            //duplicadas en el body
+            // Remover duplicados y validar cargas
             const cargasUnicas = [...new Set(tipoCargas)];
-
+            
             if (tipoCargas.length !== cargasUnicas.length) {
-                throw new BadRequestException('No se permiten cargas duplicadas en la lista cargas');
+                throw new BadRequestException('No se permiten cargas duplicadas en la lista de cargas');
             }
 
-            // Buscar las cargas por ID
+            // Verificar que existan las cargas
             const cargasRelacionadas = await this.tipoCargaRepo.findBy({id: In(cargasUnicas)});
 
             if (cargasRelacionadas.length !== cargasUnicas.length) {
                 throw new BadRequestException('Algunas cargas no existen');
             }
 
+            // Verificar si ya existe la combinación descripción + cargas
+            const tiposExistentes = await this.tipoVehiculoRep.find({
+                where: { descripcion },
+                relations: ['tipoCargas']
+            });
+
+            if (tiposExistentes.length > 0) {
+                const cargasNuevas = cargasUnicas.sort();
+                
+                for (const tipo of tiposExistentes) {
+                    const cargasExistentes = tipo.tipoCargas.map(c => c.id).sort();
+                    
+                    if (JSON.stringify(cargasExistentes) === JSON.stringify(cargasNuevas)) {
+                        throw new ConflictException('Ya existe un tipo de vehículo con esa descripción y las mismas cargas.');
+                    }
+                }
+            }
+
+            // Crear y guardar
             const nuevoTipoVehiculo = this.tipoVehiculoRep.create({
                 descripcion,
-               /* precioBase,*/
                 tipoCargas: cargasRelacionadas,
             });
 
             return await this.tipoVehiculoRep.save(nuevoTipoVehiculo);
+            
         } catch (error) {
             this.logger.error('Error al crear tipo de vehículo', error.stack);
-      
-            if(error instanceof BadRequestException){
-                throw error
+    
+            if (error instanceof BadRequestException || error instanceof ConflictException) {
+                throw error;
             }
-      
-            throw new Error('No se pudo crear el tipo de vehículo');
+    
+            throw new InternalServerErrorException('No se pudo crear el tipo de vehículo');
         }
     }
 
