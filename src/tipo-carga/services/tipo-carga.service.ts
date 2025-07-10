@@ -42,8 +42,8 @@ export class TipoCargaService {
 
     public async crearTipoCarga(body: TipoCargaDTO): Promise<TipoCarga> {
         try {
-            const cargas = await this.cargaRepository.find();
 
+            const cargas = await this.cargaRepository.find();
             const cargaExistente = await this.cargaRepository.findOne({
                 where: {
                     categoria: body.categoria,
@@ -68,7 +68,7 @@ export class TipoCargaService {
 
             throw new InternalServerErrorException('Ocurrió un error al guardar el tipo de carga. Intente nuevamente.');
         }
-    }
+    }   
 
 
     public async actualizarCarga(id: number, body: TipoCargaDTO): Promise<TipoCarga> {

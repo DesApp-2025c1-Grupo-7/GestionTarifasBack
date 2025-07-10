@@ -48,19 +48,18 @@ export class TipoVehiculoService {
 
 
 
-
     async crearTipoVehiculo(body: CreateTipoVehiculoDTO): Promise<TipoVehiculo> {
         try {
             const { descripcion, tipoCargas } = body;
 
             // Remover duplicados y validar cargas
             const cargasUnicas = [...new Set(tipoCargas)];
-
+            
             if (tipoCargas.length !== cargasUnicas.length) {
                 throw new BadRequestException('No se permiten cargas duplicadas en la lista de cargas');
             }
 
-            // Buscar las cargas por ID
+            // Verificar que existan las cargas
             const cargasRelacionadas = await this.tipoCargaRepo.findBy({id: In(cargasUnicas)});
 
             if (cargasRelacionadas.length !== cargasUnicas.length) {
@@ -87,19 +86,23 @@ export class TipoVehiculoService {
 
             // Crear y guardar
 
+
             const nuevoTipoVehiculo = this.tipoVehiculoRep.create({
                 descripcion,
                 tipoCargas: cargasRelacionadas,
             });
 
             return await this.tipoVehiculoRep.save(nuevoTipoVehiculo);
+            
         } catch (error) {
             this.logger.error('Error al crear tipo de vehículo', error.stack);
+
       
             if (error instanceof BadRequestException || error instanceof ConflictException) {
                 throw error;
             }
       
+
             throw new InternalServerErrorException('No se pudo crear el tipo de vehículo');
         }
     }

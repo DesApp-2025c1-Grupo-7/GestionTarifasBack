@@ -72,6 +72,7 @@ export class TarifaCostoService {
                     tipoCarga: { id: dataTarifa.tipoCarga },
                     transportista: { id: dataTarifa.transportista },
                     valor_base:body.valorBase,
+
                 }
             });
 
@@ -175,7 +176,6 @@ export class TarifaCostoService {
       if (!tipoVehiculo || !zonaDeViaje || !transportista || !tipoCarga) {
           throw new BadRequestException('Alguna de las entidades relacionadas no existe.');
       }
-      
       let costoTotalCalculado = dataTarifa.valorBase;
       if (adicionales && adicionales.length > 0) {
         costoTotalCalculado += adicionales.reduce((sum, ad) => sum + Number(ad.costo), 0);
@@ -205,6 +205,7 @@ export class TarifaCostoService {
             });
             await queryRunner.manager.save(nuevoVinculo);
           }
+
         }
       }
 
